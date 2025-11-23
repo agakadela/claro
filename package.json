@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "generate:types": "payload generate:types"
+    "generate:types": "payload generate:types",
+    "db:fresh": "payload migrate:fresh"
   },
   "dependencies": {
     "@payloadcms/db-mongodb": "^3.64.0",

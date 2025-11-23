@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
 
 const config = withPayload(nextConfig) as PayloadNextConfig;
 
+// TODO: Remove this after Payload new version is released + update Next.js to 16
 delete config.turbopack;
 
 export default config;
