@@ -1,15 +1,15 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { CustomCategory } from '../types';
 import { cn } from '@/lib/utils';
 import { useRef, useState } from 'react';
 import { useDropdownPosition } from './use-dropdown-position';
 import { SubcategoryMenu } from './subcategory-menu';
 import Link from 'next/link';
+import { CategoriesGetManyOutput } from '@/modules/categories/types';
 
 interface CategoryDropdownProps {
-  category: CustomCategory;
+  category: CategoriesGetManyOutput[1];
   isActive: boolean;
   isNavHovered: boolean;
 }

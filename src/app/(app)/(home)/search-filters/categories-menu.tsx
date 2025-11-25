@@ -1,18 +1,21 @@
 'use client';
 
 import { CategoryDropdown } from './category-dropdown';
-import { CustomCategory } from '../types';
 import { useRef, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { ListFilterIcon, Sidebar } from 'lucide-react';
+import { ListFilterIcon } from 'lucide-react';
 import { CategoriesSidebar } from './categories-sidebar';
+import { useTRPC } from '@/trpc/client';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { CategoriesGetManyOutput } from '@/modules/categories/types';
 
-export function CategoriesMenu({
-  categories,
-}: {
-  categories: CustomCategory[];
-}) {
+export function CategoriesMenu() {
+  const trpc = useTRPC();
+  const { data: categories } = useSuspenseQuery(
+    trpc.categories.getMany.queryOptions()
+  ) as { data: CategoriesGetManyOutput };
+
   const containerRef = useRef<HTMLDivElement>(null);
   const measuredRef = useRef<HTMLDivElement>(null);
   const viewAllRef = useRef<HTMLDivElement>(null);
@@ -64,7 +67,6 @@ export function CategoriesMenu({
   return (
     <div className='relative w-full'>
       <CategoriesSidebar
-        categories={categories}
         isOpen={isSidebarOpen}
         onOpenChange={setIsSidebarOpen}
       />
