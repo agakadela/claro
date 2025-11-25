@@ -1,7 +1,5 @@
 'use client';
 
-import { CustomCategory } from '../types';
-import { NavbarSidebar } from '../navbar-sidebar';
 import { useState } from 'react';
 import {
   Sheet,
@@ -10,28 +8,33 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { CategoryDropdown } from './category-dropdown';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { useTRPC } from '@/trpc/client';
+import { CategoriesGetManyOutput } from '@/modules/categories/types';
 
 interface CategoriesSidebarProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  categories: CustomCategory[];
 }
 
 export function CategoriesSidebar({
   isOpen,
   onOpenChange,
-  categories,
 }: CategoriesSidebarProps) {
+  const trpc = useTRPC();
+  const { data: categories } = useSuspenseQuery(
+    trpc.categories.getMany.queryOptions()
+  );
+
   const router = useRouter();
   const [parentCategories, setParentCategories] = useState<
-    CustomCategory[] | null | undefined
+    CategoriesGetManyOutput | null | undefined
   >(undefined);
-  const [selectedCategory, setSelectedCategory] =
-    useState<CustomCategory | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<
+    CategoriesGetManyOutput[1] | null
+  >(null);
 
   // Explicit branching: null = show root, undefined = use categories as-is, else use parentCategories
   const currentCategories =
@@ -47,9 +50,9 @@ export function CategoriesSidebar({
     onOpenChange(isOpen);
   }
 
-  function handleCategoryClick(category: CustomCategory) {
+  function handleCategoryClick(category: CategoriesGetManyOutput[1]) {
     if (category.subcategories && category.subcategories.length > 0) {
-      setParentCategories(category.subcategories as CustomCategory[]);
+      setParentCategories(category.subcategories as CategoriesGetManyOutput);
       setSelectedCategory(category);
     } else {
       if (parentCategories && selectedCategory) {
