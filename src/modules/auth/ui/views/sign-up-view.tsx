@@ -34,7 +34,9 @@ export default function SignUpView() {
         toast.error(error.message);
       },
       onSuccess: () => {
-        queryClient.invalidateQueries(trpc.auth.session.queryOptions());
+        queryClient.invalidateQueries({
+          queryKey: trpc.auth.session.queryKey(),
+        });
         router.push('/');
       },
     })
