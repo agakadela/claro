@@ -4,6 +4,7 @@ import { headers as getHeaders, cookies as getCookies } from 'next/headers';
 import { z } from 'zod';
 import { AUTH_TOKEN_MAX_AGE, AUTH_TOKEN_NAME } from '../constants';
 import { registerSchema } from '../schemas';
+import { generateAuthCookie } from '../utils';
 
 export const authRouter = createTRPCRouter({
   session: baseProcedure.query(async ({ ctx }) => {
@@ -53,15 +54,9 @@ export const authRouter = createTRPCRouter({
           message: 'Failed to login',
         });
       }
-      const cookies = await getCookies();
-      cookies.set({
-        name: AUTH_TOKEN_NAME,
+      await generateAuthCookie({
+        prefix: ctx.payload.config.cookiePrefix,
         value: loginUser.token,
-        httpOnly: true,
-        maxAge: AUTH_TOKEN_MAX_AGE,
-        sameSite: 'none',
-        // domain: process.env.NODE_ENV === 'production' ? 'claro.com' : 'localhost',
-        path: '/',
       });
     }),
   login: baseProcedure
@@ -85,15 +80,9 @@ export const authRouter = createTRPCRouter({
           message: 'Failed to login',
         });
       }
-      const cookies = await getCookies();
-      cookies.set({
-        name: AUTH_TOKEN_NAME,
+      await generateAuthCookie({
+        prefix: ctx.payload.config.cookiePrefix,
         value: user.token,
-        httpOnly: true,
-        maxAge: AUTH_TOKEN_MAX_AGE,
-        // sameSite: 'none',
-        // domain: process.env.NODE_ENV === 'production' ? 'claro.com' : 'localhost',
-        path: '/',
       });
       return user;
     }),

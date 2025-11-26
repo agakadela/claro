@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useTRPC } from '@/trpc/client';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { loginSchema } from '@/modules/auth/schemas';
@@ -24,12 +24,15 @@ import { loginSchema } from '@/modules/auth/schemas';
 export default function SignInView() {
   const router = useRouter();
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
   const loginMutation = useMutation(
     trpc.auth.login.mutationOptions({
       onError: (error) => {
         toast.error(error.message);
       },
       onSuccess: () => {
+        queryClient.invalidateQueries(trpc.auth.session.queryOptions());
         router.push('/');
       },
     })
