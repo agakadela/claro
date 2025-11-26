@@ -44,7 +44,7 @@ const NavBarItem = ({ href, label, isActive = false }: NavBarItemProps) => {
   );
 };
 
-export function Navbar() {
+export function Navbar({ isAuth = false }: { isAuth?: boolean }) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   return (
@@ -54,48 +54,55 @@ export function Navbar() {
           Claro
         </span>
       </Link>
-      <NavbarSidebar
-        items={navItems}
-        isOpen={isSidebarOpen}
-        onOpenChange={setIsSidebarOpen}
-      />
-      <div className='items-center justify-center gap-4 hidden lg:flex'>
-        {navItems.map((item) => (
-          <NavBarItem
-            key={item.label}
-            href={item.href}
-            label={item.label}
-            isActive={item.href === pathname}
+      {!isAuth ? (
+        <>
+          <NavbarSidebar
+            items={navItems}
+            isOpen={isSidebarOpen}
+            onOpenChange={setIsSidebarOpen}
           />
-        ))}
-      </div>
 
-      <div className='hidden lg:flex items-center justify-center'>
-        <Button
-          asChild
-          variant='secondary'
-          className='border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-white hover:bg-pink-400 transition-colors text-lg'
-        >
-          <Link href='/login'>Log in</Link>
-        </Button>
-        <Button
-          asChild
-          variant='secondary'
-          className='border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-black text-white hover:bg-pink-400 hover:text-black transition-colors text-lg'
-        >
-          <Link href='/sign-up'>Start selling</Link>
-        </Button>
-      </div>
-      <div className='flex lg:hidden items-center justify-center'>
-        <Button
-          variant='ghost'
-          size='lg'
-          className='border-transparent bg-white'
-          onClick={() => setIsSidebarOpen(true)}
-        >
-          <MenuIcon />
-        </Button>
-      </div>
+          <div className='items-center justify-center gap-4 hidden lg:flex'>
+            {navItems.map((item) => (
+              <NavBarItem
+                key={item.label}
+                href={item.href}
+                label={item.label}
+                isActive={item.href === pathname}
+              />
+            ))}
+          </div>
+
+          <div className='hidden lg:flex items-center justify-center'>
+            <Button
+              asChild
+              variant='secondary'
+              className='border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-white hover:bg-pink-400 transition-colors text-lg'
+            >
+              <Link href='/sign-in'>Log in</Link>
+            </Button>
+            <Button
+              asChild
+              variant='secondary'
+              className='border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-black text-white hover:bg-pink-400 hover:text-black transition-colors text-lg'
+            >
+              <Link href='/sign-up'>Start selling</Link>
+            </Button>
+          </div>
+          <div className='flex lg:hidden items-center justify-center'>
+            <Button
+              variant='ghost'
+              size='lg'
+              className='border-transparent bg-white'
+              onClick={() => setIsSidebarOpen(true)}
+            >
+              <MenuIcon />
+            </Button>
+          </div>
+        </>
+      ) : (
+        <></>
+      )}
     </nav>
   );
 }
