@@ -1,5 +1,5 @@
 import SignInView from '@/modules/auth/ui/views/sign-in-view';
-import { Navbar } from '@/app/(app)/(home)/navbar';
+import { Navbar } from '@/modules/home/ui/components/navbar';
 import { caller } from '@/trpc/server';
 import { redirect } from 'next/navigation';
 
