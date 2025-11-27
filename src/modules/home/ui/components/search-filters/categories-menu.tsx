@@ -10,7 +10,11 @@ import { useTRPC } from '@/trpc/client';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { CategoriesGetManyOutput } from '@/modules/categories/types';
 
-export function CategoriesMenu() {
+export function CategoriesMenu({
+  activeCategory,
+}: {
+  activeCategory: CategoriesGetManyOutput[1] | null;
+}) {
   const trpc = useTRPC();
   const { data: categories } = useSuspenseQuery(
     trpc.categories.getMany.queryOptions()
@@ -24,9 +28,8 @@ export function CategoriesMenu() {
   const [isAnyHovered, setIsAnyHovered] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const activeCategory = 'all';
   const activeCategoryIndex = categories.findIndex(
-    (category) => category.slug === activeCategory
+    (category) => category.slug === activeCategory?.slug
   );
   const isActiveCategoryHidden =
     activeCategoryIndex >= visibleCount && activeCategoryIndex !== -1;
@@ -79,7 +82,7 @@ export function CategoriesMenu() {
           <div key={category.id}>
             <CategoryDropdown
               category={category}
-              isActive={activeCategory === category.slug}
+              isActive={activeCategory?.slug === category.slug}
               isNavHovered={false}
             />
           </div>
@@ -95,7 +98,7 @@ export function CategoriesMenu() {
           <div key={category.id}>
             <CategoryDropdown
               category={category}
-              isActive={activeCategory === category.slug}
+              isActive={activeCategory?.slug === category.slug}
               isNavHovered={isAnyHovered}
             />
           </div>

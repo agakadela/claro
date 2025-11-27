@@ -6,9 +6,8 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { NavbarSidebar } from './navbar-sidebar';
-import { NavbarSidebarItemProps } from './navbar-sidebar';
-import { MenuIcon } from 'lucide-react';
+import { NavbarSidebar } from '@/modules/home/ui/components/navbar-sidebar';
+import { NavbarSidebarItemProps } from '@/modules/home/ui/components/navbar-sidebar';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@/trpc/client';
 
