@@ -8,6 +8,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { CategoriesGetManyOutput } from '@/modules/categories/types';
 import { DEFAULT_BACKGROUND_COLOR } from '@/modules/home/constants';
 import { BreadcrumbsNavigation } from './breadcrumbs-navigation';
+import { sanitizeColor } from '@/lib/utils';
 
 export function SearchFilters() {
   const params = useParams();
@@ -21,27 +22,17 @@ export function SearchFilters() {
   const activeCategoryData =
     categories.find((category) => category.slug === activeCategory) ?? null;
 
-  const activeCategoryColor =
-    activeCategoryData?.color ?? DEFAULT_BACKGROUND_COLOR;
-  const activeCategoryName = activeCategoryData?.name ?? null;
+  const activeCategoryColor = sanitizeColor(
+    activeCategoryData?.color ?? DEFAULT_BACKGROUND_COLOR,
+    DEFAULT_BACKGROUND_COLOR
+  );
 
   const activeSubcategory = params.subcategory as string | undefined;
-  const activeSubategoryName =
+  const activeSubcategoryName =
     activeCategoryData?.subcategories?.find(
       (subcategory) => subcategory.slug === activeSubcategory
     )?.name ?? null;
-  console.log(
-    'Active Category:',
-    activeCategory,
-    'Active Category Data:',
-    activeCategoryData,
-    'Active Subcategory:',
-    activeSubcategory,
-    'Active Subategory Name:',
-    activeSubategoryName,
-    'Active Category Name:',
-    activeCategoryName
-  );
+
   return (
     <div
       className='flex flex-col gap-4 w-full px-4 lg:px-12 py-8 border-b'
@@ -53,7 +44,7 @@ export function SearchFilters() {
       </div>
       <BreadcrumbsNavigation
         activeCategory={activeCategoryData}
-        activeSubcategory={activeSubategoryName}
+        activeSubcategory={activeSubcategoryName}
       />
     </div>
   );
