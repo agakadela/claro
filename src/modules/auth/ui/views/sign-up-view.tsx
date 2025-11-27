@@ -19,19 +19,24 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useTRPC } from '@/trpc/client';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
 export default function SignUpView() {
   const router = useRouter();
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
   const registerMutation = useMutation(
     trpc.auth.register.mutationOptions({
       onError: (error) => {
         toast.error(error.message);
       },
       onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: trpc.auth.session.queryKey(),
+        });
         router.push('/');
       },
     })
