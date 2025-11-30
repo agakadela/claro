@@ -14,7 +14,7 @@ export default async function HomeLayout({
   children: React.ReactNode;
 }) {
   const queryClient = getQueryClient();
-  await queryClient.prefetchQuery(trpc.categories.getMany.queryOptions());
+  void queryClient.prefetchQuery(trpc.categories.getMany.queryOptions());
 
   return (
     <div className='flex flex-col min-h-screen'>

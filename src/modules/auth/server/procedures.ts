@@ -2,7 +2,7 @@ import { baseProcedure, createTRPCRouter } from '@/trpc/init';
 import { TRPCError } from '@trpc/server';
 import { headers as getHeaders, cookies as getCookies } from 'next/headers';
 import { z } from 'zod';
-import { AUTH_TOKEN_MAX_AGE, AUTH_TOKEN_NAME } from '../constants';
+import { AUTH_TOKEN_NAME } from '../constants';
 import { registerSchema } from '../schemas';
 import { generateAuthCookie } from '../utils';
 

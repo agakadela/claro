@@ -5,7 +5,7 @@ import {
   BreadcrumbLink,
   BreadcrumbSeparator,
   BreadcrumbPage,
-} from '@/components/ui/breadcrumb';
+} from '@/components/ui/breadcrumbs';
 import { CategoriesGetManyOutput } from '@/modules/categories/types';
 import Link from 'next/link';
 
