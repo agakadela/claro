@@ -18,7 +18,7 @@ export function ProductsList({ category }: { category: string }) {
   const trpc = useTRPC();
   const { data: products } = useSuspenseQuery(
     trpc.products.getMany.queryOptions({ category })
-  ) as { data: ProductsGetManyOutput };
+  );
   return (
     <div>
       {products.docs.map((product) => (
