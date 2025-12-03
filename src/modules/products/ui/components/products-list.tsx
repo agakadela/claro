@@ -5,7 +5,7 @@ import { useTRPC } from '@/trpc/client';
 
 export function ProductsListSkeleton() {
   return (
-    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+    <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4'>
       <div className='h-40 w-full bg-gray-200 rounded-md animate-pulse' />
       <div className='h-40 w-full bg-gray-200 rounded-md animate-pulse' />
       <div className='h-40 w-full bg-gray-200 rounded-md animate-pulse' />
@@ -18,6 +18,7 @@ export function ProductsList({ category }: { category: string }) {
   const { data: products } = useSuspenseQuery(
     trpc.products.getMany.queryOptions({ category })
   );
+
   return (
     <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4'>
       {products.docs.map((product) => (

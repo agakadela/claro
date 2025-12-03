@@ -1,8 +1,8 @@
-import { parseAsString, useQueryStates } from 'nuqs';
+import { parseAsInteger, useQueryStates } from 'nuqs';
 
 export function useProductsFilters() {
   return useQueryStates({
-    minPrice: parseAsString.withOptions({ clearOnDefault: true }),
-    maxPrice: parseAsString.withOptions({ clearOnDefault: true }),
+    minPrice: parseAsInteger.withOptions({ clearOnDefault: true }),
+    maxPrice: parseAsInteger.withOptions({ clearOnDefault: true }),
   });
 }

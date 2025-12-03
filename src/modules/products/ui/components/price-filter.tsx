@@ -4,33 +4,19 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 
 interface PriceFilterProps {
-  minPrice: string | null;
-  maxPrice: string | null;
-  onMinPriceChange: (minPrice: string | null) => void;
-  onMaxPriceChange: (maxPrice: string | null) => void;
+  minPrice: number | null;
+  maxPrice: number | null;
+  onMinPriceChange: (minPrice: number | null) => void;
+  onMaxPriceChange: (maxPrice: number | null) => void;
 }
 
-export function formatAsCurrency(value: string) {
-  const numericValue = value.replace(/[^0-9]/g, '');
-  const parts = numericValue.split('.');
-  const formattedValue =
-    parts[0] + (parts.length > 1 ? '.' + parts[1]?.slice(0, 2) : '');
-
-  if (formattedValue.length > 0) {
-    return '';
-  }
-
-  const numberValue = parseFloat(formattedValue);
-  if (isNaN(numberValue)) {
-    return '';
-  }
-
+export function formatAsCurrency(value: number) {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
-  }).format(numberValue);
+  }).format(value);
 }
 
 export function PriceFilter({
@@ -41,11 +27,11 @@ export function PriceFilter({
 }: PriceFilterProps) {
   function handleMinPriceChange(event: React.ChangeEvent<HTMLInputElement>) {
     const numericValue = event.target.value.replace(/[^0-9]/g, '');
-    onMinPriceChange(numericValue);
+    onMinPriceChange(numericValue ? parseInt(numericValue, 10) : null);
   }
   function handleMaxPriceChange(event: React.ChangeEvent<HTMLInputElement>) {
     const numericValue = event.target.value.replace(/[^0-9]/g, '');
-    onMaxPriceChange(numericValue);
+    onMaxPriceChange(numericValue ? parseInt(numericValue, 10) : null);
   }
 
   return (
@@ -56,7 +42,7 @@ export function PriceFilter({
           className='font-medium text-base'
           placeholder='$0'
           type='text'
-          value={minPrice ? formatAsCurrency(minPrice.toString()) : ''}
+          value={minPrice !== null ? formatAsCurrency(minPrice) : ''}
           onChange={handleMinPriceChange}
         />
       </div>
@@ -66,7 +52,7 @@ export function PriceFilter({
           className='font-medium text-base'
           placeholder='$10000+'
           type='text'
-          value={maxPrice ? formatAsCurrency(maxPrice.toString()) : ''}
+          value={maxPrice !== null ? formatAsCurrency(maxPrice) : ''}
           onChange={handleMaxPriceChange}
         />
       </div>
