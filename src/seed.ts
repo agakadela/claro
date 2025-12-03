@@ -174,7 +174,7 @@ async function seed() {
             equals: subcategory.slug,
           },
           parent: {
-            equals: parentCategory.id,
+            equals: parentCategory?.id,
           },
         },
         limit: 1,
@@ -186,7 +186,7 @@ async function seed() {
           data: {
             name: subcategory.name,
             slug: subcategory.slug,
-            parent: parentCategory.id,
+            parent: parentCategory?.id,
           },
         });
       }
