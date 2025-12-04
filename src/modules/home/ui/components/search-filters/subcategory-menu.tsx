@@ -5,22 +5,14 @@ import { CategoriesGetManyOutput } from '@/modules/categories/types';
 interface SubcategoryMenuProps {
   category: CategoriesGetManyOutput[1];
   isOpen: boolean;
-  position: { top: number; left: number };
 }
 
-export function SubcategoryMenu({
-  category,
-  isOpen,
-  position,
-}: SubcategoryMenuProps) {
+export function SubcategoryMenu({ category, isOpen }: SubcategoryMenuProps) {
   if (!isOpen || !category.subcategories || category.subcategories.length === 0)
     return null;
 
   return (
-    <div
-      className='fixed z-100'
-      style={{ top: position.top, left: position.left }}
-    >
+    <div className='absolute z-100 top-full left-0'>
       <div className='h-3 w-60 ' />
       <div
         style={{ backgroundColor: category.color ?? 'bg-gray-50' }}
