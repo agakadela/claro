@@ -42,6 +42,7 @@ export function PriceFilter({
           className='font-medium text-base'
           placeholder='$0'
           type='text'
+          inputMode='numeric'
           value={minPrice !== null ? formatAsCurrency(minPrice) : ''}
           onChange={handleMinPriceChange}
         />
@@ -52,6 +53,7 @@ export function PriceFilter({
           className='font-medium text-base'
           placeholder='$10000+'
           type='text'
+          inputMode='numeric'
           value={maxPrice !== null ? formatAsCurrency(maxPrice) : ''}
           onChange={handleMaxPriceChange}
         />
