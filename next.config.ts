@@ -5,6 +5,9 @@ type PayloadNextConfig = NextConfig & { turbopack?: unknown };
 
 const nextConfig: NextConfig = {
   /* config options here */
+  images: {
+    domains: ['localhost', 'prd.place'],
+  },
 };
 
 const config = withPayload(nextConfig) as PayloadNextConfig;

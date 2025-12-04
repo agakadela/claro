@@ -7,11 +7,11 @@ export function useDropdownPosition(
     const rect = dropdownRef.current.getBoundingClientRect();
     const dropdownWidth = 240;
 
-    let left = rect.left + window.scrollX;
-    const top = rect.bottom + window.scrollY;
+    let left = rect.left;
+    const top = rect.bottom;
 
     if (left + dropdownWidth > window.innerWidth) {
-      left = rect.right + window.scrollX - dropdownWidth;
+      left = rect.right - dropdownWidth;
 
       if (left < 0) {
         left = window.innerWidth - dropdownWidth - 16;
