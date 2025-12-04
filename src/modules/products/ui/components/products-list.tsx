@@ -2,6 +2,7 @@
 
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useTRPC } from '@/trpc/client';
+import { useProductsFilters } from '../../hooks/use-products-filters';
 
 export function ProductsListSkeleton() {
   return (
@@ -14,9 +15,10 @@ export function ProductsListSkeleton() {
 }
 
 export function ProductsList({ category }: { category: string }) {
+  const [filters] = useProductsFilters();
   const trpc = useTRPC();
   const { data: products } = useSuspenseQuery(
-    trpc.products.getMany.queryOptions({ category })
+    trpc.products.getMany.queryOptions({ category, ...filters })
   );
 
   return (
