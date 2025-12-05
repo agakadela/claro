@@ -19,7 +19,6 @@ export function TagsFilter({ tags, onTagsChange }: TagsFilterProps) {
     isLoading,
     fetchNextPage,
     hasNextPage,
-    isFetchingNextPage,
   } = useInfiniteQuery(
     trpc.tags.getMany.infiniteQueryOptions(
       { limit: DEFAULT_TAGS_LIMIT },

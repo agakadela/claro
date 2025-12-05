@@ -36,7 +36,6 @@ export function CategoriesSidebar({
     CategoriesGetManyOutput[1] | null
   >(null);
 
-  // Explicit branching: null = show root, undefined = use categories as-is, else use parentCategories
   const currentCategories =
     parentCategories === null
       ? categories.filter((category) => category.parent === null)
