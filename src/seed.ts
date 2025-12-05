@@ -1,8 +1,6 @@
 import 'dotenv/config';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
-import path from 'path';
-import { existsSync } from 'fs';
 
 async function fetchImageBuffer(picsumId: number): Promise<Buffer> {
   const response = await fetch(`https://picsum.photos/id/${picsumId}/800/600`);
@@ -716,7 +714,7 @@ async function seed() {
     },
   });
 
-  let seedTenant = await payload.find({
+  const seedTenant = await payload.find({
     collection: 'tenants',
     where: { slug: { equals: 'demo-store' } },
     limit: 1,
@@ -817,11 +815,6 @@ async function seed() {
       });
 
       let imageId: string | undefined;
-      const imagePath = path.join(
-        process.cwd(),
-        'media',
-        `product-${product.picsumId}.jpg`
-      );
 
       try {
         console.log(`Downloading image for: ${product.name}`);
