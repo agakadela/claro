@@ -6,7 +6,7 @@ import {
 import { ProductsFilters } from '../components/products-filters';
 import { ProductSort } from '../components/product-sort';
 
-export function ProductListView({ category }: { category: string }) {
+export function ProductListView({ category }: { category?: string }) {
   return (
     <div className='px-4 lg:px-12 py-8 flex flex-col gap-4'>
       <div className='flex flex-col justify-between lg:flex-row lg:items-center gap-y-2 lg:gap-y-0'>
@@ -19,7 +19,7 @@ export function ProductListView({ category }: { category: string }) {
         </div>
         <div className='lg:col-span-4 xl:col-span-6'>
           <Suspense fallback={<ProductsListSkeleton />}>
-            <ProductsList category={category} />
+            <ProductsList category={category ?? 'all'} />
           </Suspense>
         </div>
       </div>

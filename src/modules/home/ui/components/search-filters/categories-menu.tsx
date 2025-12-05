@@ -4,6 +4,7 @@ import { CategoryDropdown } from './category-dropdown';
 import { useRef, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 import { ListFilterIcon } from 'lucide-react';
 import { CategoriesSidebar } from './categories-sidebar';
 import { useTRPC } from '@/trpc/client';
@@ -78,6 +79,16 @@ export function CategoriesMenu({
         className='absolute opacity-0 pointer-events-none flex'
         style={{ position: 'fixed', top: -9999, left: -9999 }}
       >
+        <Button
+          variant='elevated'
+          className={cn(
+            'h-11 px-4 bg-transparent border-transparent rounded-full hover:bg-white hover:border-primary text-black',
+            !activeCategory && !isAnyHovered && 'bg-white border-primary'
+          )}
+          asChild
+        >
+          <Link href='/'>All</Link>
+        </Button>
         {categories.map((category) => (
           <div key={category.id}>
             <CategoryDropdown
@@ -94,6 +105,16 @@ export function CategoriesMenu({
         onMouseLeave={() => setIsAnyHovered(false)}
         className='flex items-center flex-nowrap'
       >
+        <Button
+          variant='elevated'
+          className={cn(
+            'h-11 px-4 bg-transparent border-transparent rounded-full hover:bg-white hover:border-primary text-black',
+            !activeCategory && !isAnyHovered && 'bg-white border-primary'
+          )}
+          asChild
+        >
+          <Link href='/'>All</Link>
+        </Button>
         {categories.slice(0, visibleCount).map((category) => (
           <div key={category.id}>
             <CategoryDropdown
