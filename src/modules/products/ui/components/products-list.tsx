@@ -18,7 +18,13 @@ export function ProductsListSkeleton() {
   );
 }
 
-export function ProductsList({ category }: { category: string }) {
+export function ProductsList({
+  category,
+  tenantSlug,
+}: {
+  category: string;
+  tenantSlug?: string;
+}) {
   const [filters] = useProductsFilters();
   const trpc = useTRPC();
   const {
@@ -28,7 +34,7 @@ export function ProductsList({ category }: { category: string }) {
     fetchNextPage,
   } = useSuspenseInfiniteQuery(
     trpc.products.getMany.infiniteQueryOptions(
-      { category, ...filters, limit: DEFAULT_PRODUCTS_LIMIT },
+      { ...filters, category, tenantSlug, limit: DEFAULT_PRODUCTS_LIMIT },
       {
         getNextPageParam: (lastPage) =>
           lastPage.docs.length > 0 ? lastPage.nextPage : undefined,
@@ -55,8 +61,8 @@ export function ProductsList({ category }: { category: string }) {
               id={product.id}
               name={product.name}
               imageUrl={product.image?.url}
-              authorUsername={'test'}
-              authorAvatarUrl={'https://prd.place/200'}
+              authorUsername={product.tenant?.name}
+              authorAvatarUrl={product.tenant?.image?.url}
               reviewRating={4.5}
               reviewCount={10}
               price={product.price}
