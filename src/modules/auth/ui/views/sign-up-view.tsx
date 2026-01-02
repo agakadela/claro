@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import {
   Form,
   FormControl,
@@ -61,12 +60,12 @@ export default function SignUpView() {
   const showPreview = username && !usernameError;
 
   return (
-    <div className='relative grid grid-cols-1 lg:grid-cols-4 overflow-hidden'>
-      <div className='lg:col-span-2 flex justify-center items-center w-full h-full'>
+    <div className='relative grid grid-cols-1 lg:grid-cols-4 overflow-hidden h-[calc(100vh-80px)]'>
+      <div className='lg:col-span-2 flex justify-center items-center w-full'>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className='flex flex-col gap-8 p-4 lg:p-16 w-full '
+            className='flex flex-col gap-8 p-4 lg:p-16 w-full max-w-xl'
           >
             <Button
               asChild
@@ -139,27 +138,26 @@ export default function SignUpView() {
           </form>
         </Form>
       </div>
-      <div className='hidden overflow-hidden lg:block h-[90vh] w-full lg:col-span-2'>
-        <div className='absolute top-1/2 -right-40 -translate-y-1/2 lg:w-[80vw] xl:w-[70vw]'>
-          <Image
-            className='w-full h-auto'
-            src='/bg.svg'
-            width={1349}
-            height={1216}
-            alt='Background pattern'
-            priority
-          />
+      <div className='hidden lg:flex lg:col-span-2 relative overflow-hidden bg-linear-to-br from-cyan-400 via-pink-400 to-yellow-300'>
+        <div className='absolute inset-0'>
+          <div className='absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-black/10 border-4 border-black' />
+
+          <div className='absolute top-20 right-10 w-40 h-40 bg-white border-4 border-black -rotate-12 shadow-[8px_8px_0_0_rgba(0,0,0,1)]' />
+          <div className='absolute top-32 right-24 w-32 h-32 bg-yellow-400 border-4 border-black rotate-6 shadow-[6px_6px_0_0_rgba(0,0,0,1)]' />
+
+          <div className='absolute bottom-32 left-10 w-48 h-24 bg-pink-500 border-4 border-black -rotate-3 shadow-[8px_8px_0_0_rgba(0,0,0,1)]' />
+          <div className='absolute top-1/2 right-1/4 w-24 h-24 bg-cyan-500 border-4 border-black rounded-full shadow-[6px_6px_0_0_rgba(0,0,0,1)]' />
+
+          <div className='absolute top-1/3 left-0 right-0 h-1 bg-black/20 rotate-12' />
+          <div className='absolute top-1/2 left-0 right-0 h-1 bg-black/20 -rotate-6' />
         </div>
 
-        <div className='absolute top-1/2 -right-30 -translate-y-1/2 w-[80vw] lg:w-[70vw] xl:w-[60vw] z-2'>
-          <Image
-            className='w-full h-auto'
-            src='/mockup-light.png'
-            width={989}
-            height={862}
-            alt='Product mockup'
-            priority
-          />
+        <div className='relative z-10 flex flex-col items-center justify-center w-full h-full p-8'>
+          <div className='bg-white border-4 border-black p-8 shadow-[12px_12px_0_0_rgba(0,0,0,1)] -rotate-2 hover:rotate-0 transition-transform'>
+            <span className='text-6xl xl:text-7xl font-black tracking-tighter'>
+              CLARO
+            </span>
+          </div>
         </div>
       </div>
     </div>
