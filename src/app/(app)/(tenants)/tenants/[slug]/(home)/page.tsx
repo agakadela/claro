@@ -21,7 +21,7 @@ export default async function TenantPage({
       ...filters,
       tenantSlug: slug,
       limit: DEFAULT_PRODUCTS_LIMIT,
-    })
+    }),
   );
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
