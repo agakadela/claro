@@ -25,7 +25,7 @@ export function isValidCSSColor(color: string): boolean {
   // Check for hsl/hsla
   if (
     /^hsla?\(\s*\d+\s*,\s*[\d.]+%\s*,\s*[\d.]+%\s*(,\s*[\d.]+\s*)?\)$/i.test(
-      color
+      color,
     )
   )
     return true;
@@ -45,4 +45,8 @@ export function isValidCSSColor(color: string): boolean {
  */
 export function sanitizeColor(color: string, fallback: string): string {
   return isValidCSSColor(color) ? color : fallback;
+}
+
+export function generateTenantUrl(tenantSlug: string): string {
+  return `/tenants/${tenantSlug}`;
 }

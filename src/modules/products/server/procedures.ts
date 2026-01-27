@@ -18,7 +18,7 @@ export const productsRouter = createTRPCRouter({
         tags: z.array(z.string()).nullable().optional(),
         sort: z.enum(sortValues).nullable().optional(),
         tenantSlug: z.string().nullable().optional(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const where: Where = {};
@@ -78,7 +78,7 @@ export const productsRouter = createTRPCRouter({
               (subcategory) => ({
                 ...(subcategory as Category), // we know it's Category not string because of depth: 1
                 subcategories: undefined,
-              })
+              }),
             ),
           }));
         const subcategoriesSlugs = [];
@@ -88,8 +88,8 @@ export const productsRouter = createTRPCRouter({
         if (parentCategory) {
           subcategoriesSlugs.push(
             ...parentCategory.subcategories.map(
-              (subcategory) => subcategory.slug
-            )
+              (subcategory) => subcategory.slug,
+            ),
           );
           where['category.slug'] = {
             in: [parentCategory.slug, ...subcategoriesSlugs],

@@ -2,12 +2,15 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { StarIcon } from 'lucide-react';
 import { formatAsCurrency } from './price-filter';
+import { generateTenantUrl } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 interface ProductCardProps {
   id: string;
   name: string;
   imageUrl?: string | null;
   authorUsername: string;
+  authorSlug: string;
   authorAvatarUrl?: string | null;
   reviewRating: number;
   reviewCount: number;
@@ -27,11 +30,18 @@ export function ProductCard({
   name,
   imageUrl,
   authorUsername,
+  authorSlug,
   authorAvatarUrl,
   reviewRating,
   reviewCount,
   price,
 }: ProductCardProps) {
+  const router = useRouter();
+  const handleAuthorClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    router.push(generateTenantUrl(authorSlug));
+  };
   return (
     <Link href={`/products/${id}`}>
       <div className='flex flex-col border rounded-md bg-white overflow-hidden h-full hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]  transition-shadow duration-300'>
@@ -45,7 +55,7 @@ export function ProductCard({
         </div>
         <div className='flex flex-col p-4 border-y gap-3 flex-1'>
           <h3 className='text-lg font-medium line-clamp-4'>{name}</h3>
-          <div className='flex items-center gap-2' onClick={() => {}}>
+          <div className='flex items-center gap-2' onClick={handleAuthorClick}>
             {authorAvatarUrl && (
               <Image
                 className='rounded-full border shrink-0 size-[20px]'
@@ -55,7 +65,12 @@ export function ProductCard({
                 height={20}
               />
             )}
-            <span className='text-sm text-gray-500'>{authorUsername}</span>
+            <span
+              className='text-sm text-gray-500 underline'
+              onClick={handleAuthorClick}
+            >
+              {authorUsername}
+            </span>
           </div>
           {reviewCount > 0 && (
             <div className='flex items-center gap-1'>

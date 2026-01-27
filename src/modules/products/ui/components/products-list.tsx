@@ -38,8 +38,8 @@ export function ProductsList({
       {
         getNextPageParam: (lastPage) =>
           lastPage.docs.length > 0 ? lastPage.nextPage : undefined,
-      }
-    )
+      },
+    ),
   );
 
   if (products.pages?.[0]?.docs.length === 0) {
@@ -62,12 +62,13 @@ export function ProductsList({
               name={product.name}
               imageUrl={product.image?.url}
               authorUsername={product.tenant?.name}
+              authorSlug={product.tenant?.slug}
               authorAvatarUrl={product.tenant?.image?.url}
               reviewRating={4.5}
               reviewCount={10}
               price={product.price}
             />
-          ))
+          )),
         )}
       </div>
       <div className='flex justify-center pt-8'>
