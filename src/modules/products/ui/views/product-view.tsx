@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { LinkIcon, StarIcon } from 'lucide-react';
 import { Fragment } from 'react';
 import { Progress } from '@/components/ui/progress';
+import { Product } from '@/payload-types';
 
 export function ProductDetailView({
   productId,
@@ -21,7 +22,7 @@ export function ProductDetailView({
 }) {
   const trpc = useTRPC();
   const { data: product } = useSuspenseQuery(
-    trpc.products.getOne.queryOptions({ id: productId }),
+    trpc.products.getOne.queryOptions({ id: productId, tenantSlug }),
   );
 
   return (
@@ -95,7 +96,7 @@ export function ProductDetailView({
               <div className='flex flex-col gap-4 p-6 border-b'>
                 <div className='flex flex-row items-center gap-2'>
                   <Button variant='elevated' className='flex-1 bg-pink-400'>
-                    Add to card
+                    Add to cart
                   </Button>
                   <Button
                     variant='elevated'
@@ -109,7 +110,9 @@ export function ProductDetailView({
                 <p className='text-center font-medium'>
                   {product.refundPolicy === 'no_refund'
                     ? 'No refunds'
-                    : `${product.refundPolicy} money back guarantee`}
+                    : product.refundPolicy
+                      ? `${product.refundPolicy.replace('_', ' ')} money back guarantee`
+                      : 'Refund policy not available'}
                 </p>
               </div>
               <div className='p-6'>

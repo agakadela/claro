@@ -40,10 +40,18 @@ export function ProductCard({
   const handleTenantClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (!tenantSlug) return;
+
     router.push(generateTenantUrl(tenantSlug));
   };
+
+  const productHref = tenantSlug
+    ? `${generateTenantUrl(tenantSlug)}/products/${id}`
+    : '#';
+
   return (
-    <Link href={`${generateTenantUrl(tenantSlug)}/products/${id}`}>
+    <Link href={productHref} aria-disabled={!tenantSlug}>
       <div className='flex flex-col border rounded-md bg-white overflow-hidden h-full hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]  transition-shadow duration-300'>
         <div className='relative aspect-square'>
           <Image
