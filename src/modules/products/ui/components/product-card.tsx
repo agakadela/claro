@@ -9,9 +9,9 @@ interface ProductCardProps {
   id: string;
   name: string;
   imageUrl?: string | null;
-  authorUsername: string;
-  authorSlug: string;
-  authorAvatarUrl?: string | null;
+  tenantName: string;
+  tenantSlug: string;
+  tenantAvatarUrl?: string | null;
   reviewRating: number;
   reviewCount: number;
   price: number;
@@ -29,21 +29,29 @@ export function ProductCard({
   id,
   name,
   imageUrl,
-  authorUsername,
-  authorSlug,
-  authorAvatarUrl,
+  tenantName,
+  tenantSlug,
+  tenantAvatarUrl,
   reviewRating,
   reviewCount,
   price,
 }: ProductCardProps) {
   const router = useRouter();
-  const handleAuthorClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleTenantClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    router.push(generateTenantUrl(authorSlug));
+
+    if (!tenantSlug) return;
+
+    router.push(generateTenantUrl(tenantSlug));
   };
+
+  const productHref = tenantSlug
+    ? `${generateTenantUrl(tenantSlug)}/products/${id}`
+    : '#';
+
   return (
-    <Link href={`/products/${id}`}>
+    <Link href={productHref} aria-disabled={!tenantSlug}>
       <div className='flex flex-col border rounded-md bg-white overflow-hidden h-full hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]  transition-shadow duration-300'>
         <div className='relative aspect-square'>
           <Image
@@ -55,21 +63,21 @@ export function ProductCard({
         </div>
         <div className='flex flex-col p-4 border-y gap-3 flex-1'>
           <h3 className='text-lg font-medium line-clamp-4'>{name}</h3>
-          <div className='flex items-center gap-2' onClick={handleAuthorClick}>
-            {authorAvatarUrl && (
+          <div className='flex items-center gap-2' onClick={handleTenantClick}>
+            {tenantAvatarUrl && (
               <Image
                 className='rounded-full border shrink-0 size-[20px]'
-                src={authorAvatarUrl}
-                alt={authorUsername}
+                src={tenantAvatarUrl}
+                alt={tenantName}
                 width={20}
                 height={20}
               />
             )}
             <span
               className='text-sm text-gray-500 underline'
-              onClick={handleAuthorClick}
+              onClick={handleTenantClick}
             >
-              {authorUsername}
+              {tenantName}
             </span>
           </div>
           {reviewCount > 0 && (
@@ -85,7 +93,7 @@ export function ProductCard({
           )}
         </div>
         <div className='p-4'>
-          <div className='relative px-2 py-1 border bg-pink-400 w-fit'>
+          <div className='px-2 py-1 border bg-pink-400 w-fit'>
             <p className='text-sm'>{formatAsCurrency(price)}</p>
           </div>
         </div>

@@ -5,8 +5,35 @@ import { Sort, Where } from 'payload';
 import { z } from 'zod';
 import { sortValues } from '../hooks/use-products-filters';
 import { DEFAULT_PRODUCTS_LIMIT } from '../constants';
+import { TRPCError } from '@trpc/server';
 
 export const productsRouter = createTRPCRouter({
+  getOne: baseProcedure
+    .input(z.object({ id: z.string(), tenantSlug: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const product = await ctx.payload.findByID({
+        collection: 'products',
+        id: input.id,
+        depth: 2,
+      });
+
+      const tenant =
+        product.tenant && typeof product.tenant === 'object'
+          ? (product.tenant as Tenant)
+          : null;
+      if (!tenant || tenant.slug !== input.tenantSlug) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Product not found',
+        });
+      }
+
+      return {
+        ...product,
+        image: product.image as Media | null,
+        tenant: { ...tenant, image: tenant.image as Media | null },
+      };
+    }),
   getMany: baseProcedure
     .input(
       z.object({

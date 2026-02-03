@@ -61,9 +61,9 @@ export function ProductsList({
               id={product.id}
               name={product.name}
               imageUrl={product.image?.url}
-              authorUsername={product.tenant?.name}
-              authorSlug={product.tenant?.slug}
-              authorAvatarUrl={product.tenant?.image?.url}
+              tenantName={product.tenant?.name}
+              tenantSlug={product.tenant?.slug ?? ''}
+              tenantAvatarUrl={product.tenant?.image?.url}
               reviewRating={4.5}
               reviewCount={10}
               price={product.price}
