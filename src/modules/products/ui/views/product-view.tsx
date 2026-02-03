@@ -13,6 +13,74 @@ import { Fragment } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { Product } from '@/payload-types';
 
+export function ProductDetailViewSkeleton() {
+  return (
+    <div className="px-4 lg:px-12 py-10">
+      <div className="border rounded-sm bg-white overflow-hidden">
+        <div className="relative aspect-[3.9] border-b bg-gray-200 animate-pulse" />
+        <div className="grid grid-cols-1 lg:grid-cols-6">
+          <div className="col-span-4">
+            <div className="p-6">
+              <div className="h-10 w-3/4 bg-gray-200 rounded animate-pulse" />
+            </div>
+            <div className="border-y flex">
+              <div className="px-6 py-4 flex items-center justify-center border-r">
+                <div className="h-8 w-20 bg-gray-200 rounded animate-pulse" />
+              </div>
+              <div className="px-6 py-4 flex items-center justify-center lg:border-r">
+                <div className="flex items-center gap-2">
+                  <div className="size-5 bg-gray-200 rounded-full animate-pulse" />
+                  <div className="h-5 w-24 bg-gray-200 rounded animate-pulse" />
+                </div>
+              </div>
+              <div className="hidden lg:flex px-6 py-4 items-center justify-center">
+                <div className="h-5 w-28 bg-gray-200 rounded animate-pulse" />
+              </div>
+            </div>
+            <div className="block lg:hidden px-6 py-4 items-center justify-center border-b">
+              <div className="h-5 w-28 bg-gray-200 rounded animate-pulse" />
+              <div className="h-4 w-20 bg-gray-200 rounded animate-pulse mt-1" />
+            </div>
+            <div className="p-6">
+              <div className="space-y-2">
+                <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
+                <div className="h-4 w-5/6 bg-gray-200 rounded animate-pulse" />
+                <div className="h-4 w-4/6 bg-gray-200 rounded animate-pulse" />
+              </div>
+            </div>
+          </div>
+          <div className="col-span-2">
+            <div className="border-t lg:border-t-0 lg:border-l h-full">
+              <div className="flex flex-col gap-4 p-6 border-b">
+                <div className="flex flex-row items-center gap-2">
+                  <div className="flex-1 h-10 bg-gray-200 rounded animate-pulse" />
+                  <div className="size-12 bg-gray-200 rounded animate-pulse" />
+                </div>
+                <div className="h-5 w-40 mx-auto bg-gray-200 rounded animate-pulse" />
+              </div>
+              <div className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="h-6 w-20 bg-gray-200 rounded animate-pulse" />
+                  <div className="h-5 w-28 bg-gray-200 rounded animate-pulse" />
+                </div>
+                <div className="grid grid-cols-[auto_1fr_auto] gap-3 mt-4">
+                  {[5, 4, 3, 2, 1].map((star) => (
+                    <Fragment key={star}>
+                      <div className="h-5 w-14 bg-gray-200 rounded animate-pulse" />
+                      <div className="h-5 bg-gray-200 rounded animate-pulse" />
+                      <div className="h-5 w-8 bg-gray-200 rounded animate-pulse" />
+                    </Fragment>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function ProductDetailView({
   productId,
   tenantSlug,
@@ -118,7 +186,7 @@ export function ProductDetailView({
               <div className='p-6'>
                 <div className='flex items-center justify-between'>
                   <h3 className='text-xl font-medium'>Ratings</h3>
-                  <div className='flex itens-center gap-x-1 font-medium'>
+                  <div className='flex items-center gap-x-1 font-medium'>
                     <StarIcon className='size-4 fill-yellow-500' />
                     <span className='text-sm'>4.5</span>
                     <span className='text-sm'>(10 reviews)</span>
