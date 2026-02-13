@@ -1,3 +1,4 @@
+import { useShallow } from 'zustand/react/shallow';
 import { useCartStore } from '../store/use-cart-store';
 
 export function useCart(tenantSlug: string) {
@@ -5,7 +6,7 @@ export function useCart(tenantSlug: string) {
     useCartStore();
 
   const productIds = useCartStore(
-    (state) => state.tenantCarts[tenantSlug]?.productIds ?? [],
+    useShallow((state) => state.tenantCarts[tenantSlug]?.productIds ?? []),
   );
 
   const toggleProductInCart = (productId: string) => {
@@ -30,6 +31,8 @@ export function useCart(tenantSlug: string) {
     clearAllCarts,
     toggleProductInCart,
     isProductInCart,
+    removeProductFromCart,
+    addProductToCart,
     totalItemsInCart: productIds.length,
   };
 }
