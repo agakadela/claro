@@ -45,7 +45,7 @@ export function CheckoutItem({
       <div className='py-4 flex flex-col justify-between'>
         <div>
           <Link href={productUrl} className='line-clamp-2'>
-            <h4 className='font-bold underline'> {name}</h4>
+            <h4 className='font-bold underline'>{name}</h4>
           </Link>
           <Link href={tenantUrl}>
             <p className='font-medium underline text-gray-500'>{tenantName}</p>

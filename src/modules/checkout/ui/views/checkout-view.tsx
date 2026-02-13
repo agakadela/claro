@@ -59,6 +59,18 @@ export function CheckoutView({ tenantSlug }: { tenantSlug: string }) {
     );
   }
 
+  if (error && error.data?.code !== 'NOT_FOUND' && error.data?.code !== 'FORBIDDEN') {
+    return (
+      <div className='lg:pt-16 pt-4 lg:px-12'>
+        <div className='flex flex-col items-center justify-center border border-black border-dashed gap-y-4 bg-white w-full rounded-lg p-8'>
+          <InfoIcon className='size-10 text-red-500' />
+          <p className='text-base font-medium'>Failed to load cart</p>
+          <p className='text-sm text-gray-500'>Please try refreshing the page</p>
+        </div>
+      </div>
+    );
+  }
+
   if (productsData?.totalDocs === 0) {
     return (
       <div className='lg:pt-16 pt-4 lg:px-12'>

@@ -22,7 +22,6 @@ export function CheckoutSidebar({
         <p className='font-medium text-lg'>{formatAsCurrency(totalPrice)}</p>
       </div>
       <div className='p-4 flex items-center justify-center'>
-        {' '}
         <Button
           variant='elevated'
           disabled={isPending}

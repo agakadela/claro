@@ -20,6 +20,18 @@ const t = initTRPC
      * @see https://trpc.io/docs/server/data-transformers
      */
     // transformer: superjson,
+    errorFormatter({ shape, error }) {
+      return {
+        ...shape,
+        data: {
+          ...shape.data,
+          cause:
+            error.cause && typeof error.cause === 'object'
+              ? error.cause
+              : undefined,
+        },
+      };
+    },
   });
 // Base router and procedure helpers
 export const createTRPCRouter = t.router;
