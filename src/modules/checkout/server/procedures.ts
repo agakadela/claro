@@ -15,6 +15,7 @@ export const checkoutRouter = createTRPCRouter({
       const productsData = await ctx.payload.find({
         collection: 'products',
         depth: 2,
+        limit: input.productIds.length,
         where: {
           id: {
             in: input.productIds,
