@@ -9,13 +9,21 @@ import dynamic from 'next/dynamic';
 import { generateTenantUrl } from '@/lib/utils';
 import { StarRating } from '@/components/star-rating';
 import { Button } from '@/components/ui/button';
-import { LinkIcon, StarIcon } from 'lucide-react';
+import { LinkIcon, ShoppingCartIcon, StarIcon } from 'lucide-react';
 import { Fragment } from 'react';
 import { Progress } from '@/components/ui/progress';
 
 const CartButton = dynamic(
   () => import('../components/cart-button').then((mod) => mod.CartButton),
-  { ssr: false },
+  {
+    ssr: false,
+    loading: () => (
+      <Button variant='elevated' disabled className='bg-pink-400 flex-1'>
+        <ShoppingCartIcon className='size-4' />
+        <span className='text-sm font-medium'>Add to cart</span>
+      </Button>
+    ),
+  },
 );
 
 export function ProductDetailViewSkeleton() {
@@ -57,7 +65,7 @@ export function ProductDetailViewSkeleton() {
           <div className='col-span-2'>
             <div className='border-t lg:border-t-0 lg:border-l h-full'>
               <div className='flex flex-col gap-4 p-6 border-b'>
-                <div className='flex flex-row items-center gap-2'>
+                <div className='flex flex-row items-center justify-end gap-2'>
                   <div className='flex-1 h-10 bg-gray-200 rounded animate-pulse' />
                   <div className='size-12 bg-gray-200 rounded animate-pulse' />
                 </div>
