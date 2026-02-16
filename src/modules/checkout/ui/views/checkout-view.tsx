@@ -1,6 +1,6 @@
 'use client';
 import { useTRPC } from '@/trpc/client';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useCart } from '../../hooks/use-cart';
 import { toast } from 'sonner';
 import { useEffect } from 'react';
@@ -8,11 +8,15 @@ import { CheckoutItem } from '../components/checkout-item';
 import { generateTenantUrl } from '@/lib/utils';
 import { CheckoutSidebar } from '../components/checkout-sidebar';
 import { InfoIcon, Loader2 } from 'lucide-react';
+import { useCheckoutStates } from '../../hooks/use-checkout-states';
+import { useRouter } from 'next/navigation';
 
 export function CheckoutView({ tenantSlug }: { tenantSlug: string }) {
-  const { productIds, removeProductFromCart } = useCart(tenantSlug);
-
+  const [states, setStates] = useCheckoutStates();
+  const { productIds, removeProductFromCart, clearCart } = useCart(tenantSlug);
+  const router = useRouter();
   const trpc = useTRPC();
+
   const {
     data: productsData,
     error,
@@ -23,6 +27,39 @@ export function CheckoutView({ tenantSlug }: { tenantSlug: string }) {
       tenantSlug,
     }),
   );
+
+  const purchase = useMutation(
+    trpc.checkout.purchase.mutationOptions({
+      onMutate: () => {
+        setStates({
+          success: false,
+          cancel: false,
+        });
+      },
+      onSuccess: (data) => {
+        window.location.href = data.url;
+      },
+      onError: (error) => {
+        if (error.data?.code === 'UNAUTHORIZED') {
+          router.push('/auth/sign-in');
+          // TODO: modify when subdomains are implemented
+        }
+        toast.error(error.message);
+      },
+    }),
+  );
+
+  useEffect(() => {
+    if (states.success) {
+      setStates({
+        success: false,
+        cancel: false,
+      });
+      clearCart();
+      // TODO: invalidate library
+      router.push('/products');
+    }
+  }, [states.success, clearCart, router, setStates]);
 
   useEffect(() => {
     if (
@@ -59,13 +96,19 @@ export function CheckoutView({ tenantSlug }: { tenantSlug: string }) {
     );
   }
 
-  if (error && error.data?.code !== 'NOT_FOUND' && error.data?.code !== 'FORBIDDEN') {
+  if (
+    error &&
+    error.data?.code !== 'NOT_FOUND' &&
+    error.data?.code !== 'FORBIDDEN'
+  ) {
     return (
       <div className='lg:pt-16 pt-4 lg:px-12'>
         <div className='flex flex-col items-center justify-center border border-black border-dashed gap-y-4 bg-white w-full rounded-lg p-8'>
           <InfoIcon className='size-10 text-red-500' />
           <p className='text-base font-medium'>Failed to load cart</p>
-          <p className='text-sm text-gray-500'>Please try refreshing the page</p>
+          <p className='text-sm text-gray-500'>
+            Please try refreshing the page
+          </p>
         </div>
       </div>
     );
@@ -109,9 +152,14 @@ export function CheckoutView({ tenantSlug }: { tenantSlug: string }) {
         <div className='lg:col-span-3'>
           <CheckoutSidebar
             totalPrice={totalPrice}
-            onCheckout={() => {}}
-            isCanceled={false}
-            isPending={false}
+            onPurchase={() => {
+              purchase.mutate({
+                productIds,
+                tenantSlug,
+              });
+            }}
+            isCanceled={states.cancel}
+            isPending={purchase.isPending}
           />
         </div>
       </div>
