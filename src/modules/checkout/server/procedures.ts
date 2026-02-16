@@ -101,8 +101,8 @@ export const checkoutRouter = createTRPCRouter({
         customer_email: ctx.session.user.email,
         line_items: lineItems,
         mode: 'payment',
-        success_url: `${process.env.NEXT_PUBLIC_APP_URL}${generateTenantUrl(input.tenantSlug)}/checkout/success`,
-        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}${generateTenantUrl(input.tenantSlug)}/checkout/cancel`,
+        success_url: `${process.env.NEXT_PUBLIC_APP_URL}${generateTenantUrl(input.tenantSlug)}/checkout?success=true`,
+        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}${generateTenantUrl(input.tenantSlug)}/checkout?cancel=true`,
         invoice_creation: {
           enabled: true,
         },

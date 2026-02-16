@@ -1,5 +1,4 @@
 import type { Stripe } from 'stripe';
-import type { User } from '@/payload-types';
 import { getPayload } from 'payload';
 import config from '@payload-config';
 import { NextResponse } from 'next/server';
