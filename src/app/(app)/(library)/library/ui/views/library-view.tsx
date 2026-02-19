@@ -10,7 +10,7 @@ export function LibraryView() {
   return (
     <div className='min-h-screen bg-white'>
       <nav className='p-4 bg-[#F4f4f0] w-full border-b'>
-        <Link prefetch href='/' className='flex items-center gap-2'>
+        <Link href='/' className='flex items-center gap-2'>
           <ArrowLeftIcon className='size-4' />
           <span className='text-base font-medium'>Continue shopping</span>
         </Link>

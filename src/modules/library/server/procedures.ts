@@ -12,40 +12,36 @@ export const libraryRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const orders = await ctx.payload.find({
+      const allOrders = await ctx.payload.find({
         collection: 'orders',
         depth: 0,
+        pagination: false,
         sort: '-createdAt',
         where: {
           user: {
             equals: ctx.session.user.id,
           },
         },
+      });
+
+      const allProductIds = [
+        ...new Set(allOrders.docs.map((order) => order.product as string)),
+      ];
+
+      const productsData = await ctx.payload.find({
+        collection: 'products',
+        depth: 2,
+        where: {
+          id: {
+            in: allProductIds,
+          },
+        },
         page: input.cursor,
         limit: input.limit,
       });
 
-      const productsIds = [
-        ...new Set(orders.docs.map((order) => order.product)),
-      ];
-      const productsData = await ctx.payload.find({
-        collection: 'products',
-        pagination: false,
-        depth: 2,
-        where: {
-          id: {
-            in: productsIds,
-          },
-        },
-      });
-
       return {
         ...productsData,
-        totalDocs: orders.totalDocs,
-        totalPages: orders.totalPages,
-        page: orders.page,
-        nextPage: orders.nextPage,
-        hasNextPage: orders.hasNextPage,
         docs: productsData.docs.map((product) => ({
           ...product,
           image: product.image as Media | null,
