@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 
 export function CheckoutView({ tenantSlug }: { tenantSlug: string }) {
   const [states, setStates] = useCheckoutStates();
-  const { productIds, removeProductFromCart, clearCart } = useCart(tenantSlug);
+  const { productIds, removeProduct, clearCart } = useCart(tenantSlug);
   const router = useRouter();
   const trpc = useTRPC();
 
@@ -74,7 +74,7 @@ export function CheckoutView({ tenantSlug }: { tenantSlug: string }) {
         errorData.cause?.missingIds || errorData.cause?.invalidIds || [];
 
       invalidIds.forEach((id) => {
-        removeProductFromCart(tenantSlug, id);
+        removeProduct(id);
       });
 
       toast.error(
@@ -83,7 +83,7 @@ export function CheckoutView({ tenantSlug }: { tenantSlug: string }) {
           : 'Some products are no longer available',
       );
     }
-  }, [error, removeProductFromCart, tenantSlug]);
+  }, [error, removeProduct]);
 
   if (isLoading) {
     return (
@@ -144,7 +144,7 @@ export function CheckoutView({ tenantSlug }: { tenantSlug: string }) {
                 tenantUrl={generateTenantUrl(tenantSlug)}
                 tenantName={product.tenant.name}
                 price={product.price}
-                onRemove={() => removeProductFromCart(tenantSlug, product.id)}
+                onRemove={() => removeProduct(product.id)}
               />
             ))}
           </div>

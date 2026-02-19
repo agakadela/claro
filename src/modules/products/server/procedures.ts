@@ -6,16 +6,36 @@ import { z } from 'zod';
 import { sortValues } from '../hooks/use-products-filters';
 import { DEFAULT_PRODUCTS_LIMIT } from '../constants';
 import { TRPCError } from '@trpc/server';
+import { headers as getHeaders } from 'next/headers';
 
 export const productsRouter = createTRPCRouter({
   getOne: baseProcedure
     .input(z.object({ id: z.string(), tenantSlug: z.string() }))
     .query(async ({ ctx, input }) => {
-      const product = await ctx.payload.findByID({
-        collection: 'products',
-        id: input.id,
-        depth: 2,
-      });
+      const headers = await getHeaders();
+      const session = await ctx.payload.auth({ headers });
+
+      let product = null;
+      try {
+        product = await ctx.payload.findByID({
+          collection: 'products',
+          id: input.id,
+          depth: 2,
+        });
+      } catch (error: unknown) {
+        const isNotFound =
+          error instanceof Error &&
+          'status' in error &&
+          (error as { status: number }).status === 404;
+        if (!isNotFound) throw error;
+      }
+
+      if (!product) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Product not found',
+        });
+      }
 
       const tenant =
         product.tenant && typeof product.tenant === 'object'
@@ -28,8 +48,26 @@ export const productsRouter = createTRPCRouter({
         });
       }
 
+      let isPurchased = false;
+      if (session.user) {
+        const orderData = await ctx.payload.find({
+          collection: 'orders',
+          limit: 1,
+          where: {
+            user: {
+              equals: session.user.id,
+            },
+            product: {
+              equals: input.id,
+            },
+          },
+        });
+        isPurchased = !!orderData.docs[0];
+      }
+
       return {
         ...product,
+        isPurchased,
         image: product.image as Media | null,
         tenant: { ...tenant, image: tenant.image as Media | null },
       };
