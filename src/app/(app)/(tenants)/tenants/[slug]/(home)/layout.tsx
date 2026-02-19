@@ -23,7 +23,7 @@ export default async function TenantHomeLayout({
         </Suspense>
       </HydrationBoundary>
       <div className='flex-1 bg-gray-50'>
-        <div className='max-w(--breakpoint-2xl) mx-auto'>{children}</div>
+        <div className='max-w-(--breakpoint-2xl) mx-auto'>{children}</div>
       </div>
       <TenantFooter />
     </div>

@@ -2,39 +2,34 @@
 
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { useTRPC } from '@/trpc/client';
-import { useProductsFilters } from '../../hooks/use-products-filters';
-import { ProductCard, ProductCardSkeleton } from './product-card';
-import { DEFAULT_PRODUCTS_LIMIT } from '../../constants';
+import { DEFAULT_PRODUCTS_LIMIT } from '@/modules/products/constants';
 import { Button } from '@/components/ui/button';
 import { ArrowDown, InfoIcon } from 'lucide-react';
+import {
+  LibraryProductCardSkeleton,
+  LibraryProductCard,
+} from './library-product-card';
 
-export function ProductsListSkeleton() {
+export function LibraryProductsListSkeleton() {
   return (
     <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4'>
       {Array.from({ length: DEFAULT_PRODUCTS_LIMIT }).map((_, index) => (
-        <ProductCardSkeleton key={index} />
+        <LibraryProductCardSkeleton key={index} />
       ))}
     </div>
   );
 }
 
-export function ProductsList({
-  category,
-  tenantSlug,
-}: {
-  category: string;
-  tenantSlug?: string;
-}) {
-  const [filters] = useProductsFilters();
+export function LibraryProductsList() {
   const trpc = useTRPC();
   const {
-    data: products,
+    data: libraryProducts,
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
   } = useSuspenseInfiniteQuery(
-    trpc.products.getMany.infiniteQueryOptions(
-      { ...filters, category, tenantSlug, limit: DEFAULT_PRODUCTS_LIMIT },
+    trpc.library.getMany.infiniteQueryOptions(
+      { limit: DEFAULT_PRODUCTS_LIMIT },
       {
         getNextPageParam: (lastPage) =>
           lastPage.hasNextPage ? lastPage.nextPage : undefined,
@@ -42,7 +37,7 @@ export function ProductsList({
     ),
   );
 
-  if (products.pages?.[0]?.docs.length === 0) {
+  if (libraryProducts.pages?.[0]?.docs.length === 0) {
     return (
       <div className='flex flex-col items-center justify-center border border-black border-dashed gap-y-4 bg-white w-full rounded-lg   p-8'>
         <InfoIcon className='size-10 text-gray-500' />
@@ -54,19 +49,17 @@ export function ProductsList({
   return (
     <>
       <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4'>
-        {products.pages.flatMap((page) =>
+        {libraryProducts.pages.flatMap((page) =>
           page.docs.map((product) => (
-            <ProductCard
+            <LibraryProductCard
               key={product.id}
               id={product.id}
               name={product.name}
               imageUrl={product.image?.url}
               tenantName={product.tenant?.name}
-              tenantSlug={product.tenant?.slug ?? ''}
               tenantAvatarUrl={product.tenant?.image?.url}
               reviewRating={4.5}
               reviewCount={10}
-              price={product.price}
             />
           )),
         )}

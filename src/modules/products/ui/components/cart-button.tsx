@@ -2,15 +2,32 @@ import { Button } from '@/components/ui/button';
 import { useCart } from '@/modules/checkout/hooks/use-cart';
 import { ShoppingCartIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
+
+interface CartButtonProps {
+  tenantSlug: string;
+  productId: string;
+  isPurchased?: boolean;
+}
 
 export function CartButton({
   tenantSlug,
   productId,
-}: {
-  tenantSlug: string;
-  productId: string;
-}) {
+  isPurchased,
+}: CartButtonProps) {
   const cart = useCart(tenantSlug);
+
+  if (isPurchased) {
+    return (
+      <Button
+        variant='elevated'
+        asChild
+        className='flex-1 font-medium bg-white'
+      >
+        <Link href={`/library/${productId}`}>View in Library</Link>
+      </Button>
+    );
+  }
 
   return (
     <Button

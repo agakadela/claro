@@ -56,7 +56,7 @@ export function CheckoutItem({
         <p className='font-medium'>{formatAsCurrency(price)}</p>
         <button
           onClick={onRemove}
-          className='text-sm text-gray-500 underline flex items-center gap-1'
+          className='text-sm text-gray-500 underline flex items-center gap-1 cursor-pointer'
         >
           <TrashIcon className='size-4' />
           Remove

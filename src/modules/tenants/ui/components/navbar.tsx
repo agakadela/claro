@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 export function TenantNavbarSkeleton() {
   return (
     <nav className='h-20 border-b font-medium bg-white'>
-      <div className='max-w(--breakpoint-2xl) mx-auto flex items-center justify-between h-full px-4 lg:px-12'>
+      <div className='max-w-(--breakpoint-2xl) mx-auto flex items-center justify-between h-full px-4 lg:px-12'>
         <p className='text-xl font-bold'>Loading...</p>
         <Button disabled className='bg-white'>
           <ShoppingCartIcon className='text-black' />
@@ -43,7 +43,7 @@ export function TenantNavbar({ tenantSlug }: { tenantSlug: string }) {
   );
   return (
     <nav className='h-20 border-b font-medium bg-white'>
-      <div className='max-w(--breakpoint-2xl) mx-auto flex items-center justify-between h-full px-4 lg:px-12'>
+      <div className='max-w-(--breakpoint-2xl) mx-auto flex items-center justify-between h-full px-4 lg:px-12'>
         <Link
           href={generateTenantUrl(tenantSlug)}
           className='flex items-center gap-2'

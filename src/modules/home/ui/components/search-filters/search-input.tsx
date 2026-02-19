@@ -44,7 +44,7 @@ export function SearchInput({ disabled }: SearchInputProps) {
 
       {session?.user ? (
         <Button asChild variant='elevated'>
-          <Link href='/library'>
+          <Link prefetch href='/library'>
             <BookmarkCheckIcon className='mr-2' />
             Library
           </Link>

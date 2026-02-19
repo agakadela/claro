@@ -52,6 +52,24 @@ export const checkoutRouter = createTRPCRouter({
         });
       }
 
+      const existingOrders = await ctx.payload.find({
+        collection: 'orders',
+        limit: input.productIds.length,
+        where: {
+          user: { equals: ctx.session.user.id },
+          product: { in: input.productIds },
+        },
+      });
+
+      if (existingOrders.totalDocs > 0) {
+        const alreadyOwnedIds = existingOrders.docs.map((o) => o.product);
+        throw new TRPCError({
+          code: 'CONFLICT',
+          message: 'You already own some of these products',
+          cause: { invalidIds: alreadyOwnedIds },
+        });
+      }
+
       const tenantsData = await ctx.payload.find({
         collection: 'tenants',
         depth: 1,

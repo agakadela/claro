@@ -176,7 +176,12 @@ export function ProductDetailView({
             <div className='border-t lg:border-t-0 lg:border-l h-full'>
               <div className='flex flex-col gap-4 p-6 border-b'>
                 <div className='flex flex-row items-center justify-end gap-2'>
-                  <CartButton tenantSlug={tenantSlug} productId={productId} />
+                  <CartButton
+                    tenantSlug={tenantSlug}
+                    productId={productId}
+                    isPurchased={product.isPurchased}
+                  />
+
                   <Button
                     variant='elevated'
                     className='size-12'

@@ -37,7 +37,7 @@ const NavBarItem = ({ href, label, isActive = false }: NavBarItemProps) => {
       variant='outline'
       className={cn(
         'bg-transparent hover:bg-transparent hover:border-primary border-transparent rounded-full text-lg px-3.5',
-        isActive && 'bg-black text-white hover:bg-black hover:text-white'
+        isActive && 'bg-black text-white hover:bg-black hover:text-white',
       )}
     >
       <Link href={href}>{label}</Link>
