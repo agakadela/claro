@@ -65,9 +65,53 @@ export const productsRouter = createTRPCRouter({
         isPurchased = !!orderData.docs[0];
       }
 
+      const reviews = await ctx.payload.find({
+        collection: 'reviews',
+        where: {
+          product: { equals: input.id },
+        },
+        pagination: false,
+        select: {
+          rating: true,
+        },
+      });
+
+      const reviewRating =
+        reviews.docs.length > 0
+          ? reviews.docs.reduce((acc, review) => acc + review.rating, 0) /
+            reviews.docs.length
+          : 0;
+
+      const ratingDistribution: Record<number, number> = {
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0,
+      };
+
+      if (reviews.docs.length > 0) {
+        reviews.docs.forEach((review) => {
+          if (review.rating >= 1 && review.rating <= 5) {
+            ratingDistribution[review.rating] =
+              (ratingDistribution[review.rating] || 0) + 1;
+          }
+        });
+
+        Object.keys(ratingDistribution).forEach((star) => {
+          const count = ratingDistribution[parseInt(star)] || 0;
+          ratingDistribution[parseInt(star)] = Math.round(
+            (count / reviews.docs.length) * 100,
+          );
+        });
+      }
+
       return {
         ...product,
         isPurchased,
+        reviewRating,
+        reviewCount: reviews.totalDocs,
+        ratingDistribution,
         image: product.image as Media | null,
         tenant: { ...tenant, image: tenant.image as Media | null },
       };
@@ -171,9 +215,46 @@ export const productsRouter = createTRPCRouter({
         limit: input.limit,
       });
 
+      const productIds = products.docs.map((p) => p.id);
+
+      const allReviews =
+        productIds.length > 0
+          ? await ctx.payload.find({
+              collection: 'reviews',
+              pagination: false,
+              where: { product: { in: productIds } },
+              select: { rating: true, product: true },
+            })
+          : { docs: [] };
+
+      const reviewsByProduct = allReviews.docs.reduce<Record<string, number[]>>(
+        (acc, review) => {
+          const id =
+            typeof review.product === 'string'
+              ? review.product
+              : review.product.id;
+          if (!acc[id]) acc[id] = [];
+          acc[id].push(review.rating);
+          return acc;
+        },
+        {},
+      );
+
+      const productsWithReviews = products.docs.map((product) => {
+        const ratings = reviewsByProduct[product.id] ?? [];
+        return {
+          ...product,
+          reviewCount: ratings.length,
+          reviewRating:
+            ratings.length > 0
+              ? ratings.reduce((acc, r) => acc + r, 0) / ratings.length
+              : 0,
+        };
+      });
+
       return {
         ...products,
-        docs: products.docs.map((product) => ({
+        docs: productsWithReviews.map((product) => ({
           ...product,
           image: product.image as Media | null,
           tenant: product.tenant as Tenant & { image: Media | null },
