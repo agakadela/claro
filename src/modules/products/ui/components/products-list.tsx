@@ -64,8 +64,8 @@ export function ProductsList({
               tenantName={product.tenant?.name}
               tenantSlug={product.tenant?.slug ?? ''}
               tenantAvatarUrl={product.tenant?.image?.url}
-              reviewRating={4.5}
-              reviewCount={10}
+              reviewRating={product.reviewRating}
+              reviewCount={product.reviewCount}
               price={product.price}
             />
           )),
