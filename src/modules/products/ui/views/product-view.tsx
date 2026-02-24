@@ -9,9 +9,10 @@ import dynamic from 'next/dynamic';
 import { generateTenantUrl } from '@/lib/utils';
 import { StarRating } from '@/components/star-rating';
 import { Button } from '@/components/ui/button';
-import { LinkIcon, ShoppingCartIcon, StarIcon } from 'lucide-react';
-import { Fragment } from 'react';
+import { CheckIcon, LinkIcon, ShoppingCartIcon, StarIcon } from 'lucide-react';
+import { Fragment, useState } from 'react';
 import { Progress } from '@/components/ui/progress';
+import { toast } from 'sonner';
 
 const CartButton = dynamic(
   () => import('../components/cart-button').then((mod) => mod.CartButton),
@@ -105,6 +106,20 @@ export function ProductDetailView({
   const { data: product } = useSuspenseQuery(
     trpc.products.getOne.queryOptions({ id: productId, tenantSlug }),
   );
+  const [isCopied, setIsCopied] = useState(false);
+
+  async function handleCopyLink() {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast.success('Link copied to clipboard');
+      setIsCopied(true);
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 2000);
+    } catch {
+      toast.error('Failed to copy link. Please try again.');
+    }
+  }
 
   return (
     <div className='px-4 lg:px-12 py-10'>
@@ -151,15 +166,17 @@ export function ProductDetailView({
               </div>
               <div className='hidden lg:flex px-6 py-4 items-center justify-center'>
                 <div className='flex items-center gap-1'>
-                  <StarRating rating={3} />
+                  <StarRating rating={product.reviewRating} />
                 </div>
               </div>
             </div>
             <div className='block lg:hidden px-6 py-4 items-center justify-center border-b'>
               <div className='flex items-center gap-1'>
-                <StarRating rating={4} />
+                <StarRating rating={product.reviewRating} />
               </div>
-              <p className='text-sm text-gray-500'>4.5 (10 reviews)</p>
+              <p className='text-sm text-gray-500'>
+                {product.reviewRating.toFixed(1)} ({product.reviewCount} reviews)
+              </p>
             </div>
 
             <div className='p-6'>
@@ -185,10 +202,10 @@ export function ProductDetailView({
                   <Button
                     variant='elevated'
                     className='size-12'
-                    onClick={() => {}}
-                    disabled={false}
+                    onClick={() => handleCopyLink()}
+                    disabled={isCopied}
                   >
-                    <LinkIcon />
+                    {isCopied ? <CheckIcon /> : <LinkIcon />}
                   </Button>
                 </div>
                 <p className='text-center font-medium'>
@@ -204,8 +221,10 @@ export function ProductDetailView({
                   <h3 className='text-xl font-medium'>Ratings</h3>
                   <div className='flex items-center gap-x-1 font-medium'>
                     <StarIcon className='size-4 fill-yellow-500' />
-                    <span className='text-sm'>4.5</span>
-                    <span className='text-sm'>(10 reviews)</span>
+                    <span className='text-sm'>{product.reviewRating.toFixed(1)}</span>
+                    <span className='text-sm'>
+                      ({product.reviewCount} reviews)
+                    </span>
                   </div>
                 </div>
                 <div className='grid grid-cols-[auto_1fr_auto] gap-3 mt-4'>
@@ -214,8 +233,13 @@ export function ProductDetailView({
                       <div className='font-medium'>
                         {star} {star === 1 ? 'star' : 'stars'}
                       </div>
-                      <Progress value={0} className='h-lh' />
-                      <div className='font-medium'>{0}%</div>
+                      <Progress
+                        value={product.ratingDistribution[star]}
+                        className='h-lh'
+                      />
+                      <div className='font-medium'>
+                        {product.ratingDistribution[star]}%
+                      </div>
                     </Fragment>
                   ))}
                 </div>
