@@ -2,7 +2,7 @@ import { StarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const MAX_STARS = 5;
-const MIN_STARS = 1;
+const MIN_STARS = 0;
 
 interface StarRatingProps {
   rating: number;

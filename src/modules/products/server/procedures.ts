@@ -21,6 +21,9 @@ export const productsRouter = createTRPCRouter({
           collection: 'products',
           id: input.id,
           depth: 2,
+          select: {
+            content: false,
+          },
         });
       } catch (error: unknown) {
         const isNotFound =
@@ -213,6 +216,9 @@ export const productsRouter = createTRPCRouter({
         sort,
         page: input.cursor,
         limit: input.limit,
+        select: {
+          content: false,
+        },
       });
 
       const productIds = products.docs.map((p) => p.id);

@@ -1,7 +1,17 @@
+import { isSuperAdmin } from '@/lib/access';
 import { CollectionConfig } from 'payload';
+import { Tenant } from '@/payload-types';
 
 export const Products: CollectionConfig = {
   slug: 'products',
+  access: {
+    create: ({ req: { user } }) => {
+      if (isSuperAdmin(user)) return true;
+      const tenantOrId = user?.tenants?.[0]?.tenant;
+      if (!tenantOrId || typeof tenantOrId === 'string') return false;
+      return Boolean((tenantOrId as Tenant).stripeDetailsSubmitted);
+    },
+  },
   fields: [
     {
       name: 'name',
@@ -63,6 +73,14 @@ export const Products: CollectionConfig = {
         },
       ],
       defaultValue: '30_days',
+    },
+    {
+      name: 'content',
+      type: 'richText',
+      admin: {
+        description:
+          'Protected content for customers after purchase. Add product documentation, tutorials, downloadable files, etc. Supports Markdown and rich text.',
+      },
     },
   ],
 };
