@@ -1,7 +1,12 @@
+import { isSuperAdmin } from '@/lib/access';
 import type { CollectionConfig } from 'payload';
 
 export const Tenants: CollectionConfig = {
   slug: 'tenants',
+  access: {
+    create: ({ req: { user } }) => isSuperAdmin(user),
+    delete: ({ req: { user } }) => isSuperAdmin(user),
+  },
   admin: {
     useAsTitle: 'slug',
   },
@@ -21,6 +26,9 @@ export const Tenants: CollectionConfig = {
       required: true,
       unique: true,
       index: true,
+      access: {
+        update: ({ req: { user } }) => isSuperAdmin(user),
+      },
       label: 'Store Slug',
       admin: {
         description: 'The slug of your store (e.g. [slug].claro.com)',
@@ -40,8 +48,10 @@ export const Tenants: CollectionConfig = {
       type: 'text',
       required: true,
       label: 'Stripe Connect Account ID',
+      access: {
+        update: ({ req: { user } }) => isSuperAdmin(user),
+      },
       admin: {
-        readOnly: true,
         description: 'The Stripe Connect account ID for your store',
       },
     },
@@ -49,6 +59,9 @@ export const Tenants: CollectionConfig = {
       name: 'stripeDetailsSubmitted',
       type: 'checkbox',
       label: 'Stripe Details Submitted',
+      access: {
+        update: ({ req: { user } }) => isSuperAdmin(user),
+      },
       admin: {
         readOnly: true,
         description:
