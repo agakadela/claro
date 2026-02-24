@@ -2,6 +2,12 @@ import type { CollectionConfig } from 'payload';
 
 export const Reviews: CollectionConfig = {
   slug: 'reviews',
+  indexes: [
+    {
+      fields: ['product', 'user'],
+      unique: true,
+    },
+  ],
   admin: {
     useAsTitle: 'description',
   },

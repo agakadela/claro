@@ -175,7 +175,7 @@ export function ProductDetailView({
                 <StarRating rating={product.reviewRating} />
               </div>
               <p className='text-sm text-gray-500'>
-                {product.reviewRating} ({product.reviewCount} reviews)
+                {product.reviewRating.toFixed(1)} ({product.reviewCount} reviews)
               </p>
             </div>
 
@@ -221,7 +221,7 @@ export function ProductDetailView({
                   <h3 className='text-xl font-medium'>Ratings</h3>
                   <div className='flex items-center gap-x-1 font-medium'>
                     <StarIcon className='size-4 fill-yellow-500' />
-                    <span className='text-sm'>{product.reviewRating}</span>
+                    <span className='text-sm'>{product.reviewRating.toFixed(1)}</span>
                     <span className='text-sm'>
                       ({product.reviewCount} reviews)
                     </span>

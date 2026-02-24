@@ -35,8 +35,8 @@ export function StarPicker({
             'p-0.5 hover:scale-110 transition cursor-pointer',
             disabled ? 'cursor-not-allowed hover:scale-100' : '',
           )}
-          onMouseEnter={() => setHoveredRating(index + 1)}
-          onMouseLeave={() => setHoveredRating(null)}
+          onMouseEnter={() => !disabled && setHoveredRating(index + 1)}
+          onMouseLeave={() => !disabled && setHoveredRating(null)}
         >
           <StarIcon
             className={cn(

@@ -45,6 +45,7 @@ export const reviewsRouter = createTRPCRouter({
           .max(1000),
         rating: z
           .number()
+          .int({ message: 'Rating must be a whole number' })
           .min(1, { message: 'Rating is required and must be between 1 and 5' })
           .max(5),
       }),
@@ -140,6 +141,7 @@ export const reviewsRouter = createTRPCRouter({
           .max(1000),
         rating: z
           .number()
+          .int({ message: 'Rating must be a whole number' })
           .min(1, { message: 'Rating is required and must be between 1 and 5' })
           .max(5),
       }),
