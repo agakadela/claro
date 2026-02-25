@@ -34,9 +34,11 @@ export const authRouter = createTRPCRouter({
         });
       }
 
-      const account = await stripe.accounts.create({});
-
-      if (!account) {
+      let account: Awaited<ReturnType<typeof stripe.accounts.create>>;
+      try {
+        account = await stripe.accounts.create({});
+      } catch (error) {
+        console.error(error);
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'Failed to create Stripe Connect account',
