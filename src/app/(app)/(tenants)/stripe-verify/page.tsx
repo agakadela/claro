@@ -12,9 +12,8 @@ export default function StripeVerifyPage() {
       onSuccess: (data) => {
         window.location.href = data.url;
       },
-      onError: (error) => {
-        console.error(error);
-        // window.location.href = '/';
+      onError: () => {
+        window.location.href = '/';
       },
     }),
   );
