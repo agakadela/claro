@@ -34,6 +34,7 @@ export const authRouter = createTRPCRouter({
         });
       }
 
+
       let account: Awaited<ReturnType<typeof stripe.accounts.create>>;
       try {
         account = await stripe.accounts.create({});
