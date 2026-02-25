@@ -39,5 +39,12 @@ export const Orders: CollectionConfig = {
       unique: true,
       index: true,
     },
+    {
+      name: 'stripeAccountId',
+      type: 'text',
+      admin: {
+        description: 'The Stripe account ID for the order',
+      },
+    },
   ],
 };

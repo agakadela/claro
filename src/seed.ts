@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
+import { stripe } from '@/lib/stripe';
 
 async function fetchImageBuffer(picsumId: number): Promise<Buffer> {
   const response = await fetch(`https://picsum.photos/id/${picsumId}/800/600`);
@@ -704,7 +705,7 @@ const products = [
 async function seed() {
   const payload = await getPayload({ config: configPromise });
 
-  await payload.create({
+  const adminUser = await payload.create({
     collection: 'users',
     data: {
       username: 'admin',
@@ -720,6 +721,11 @@ async function seed() {
     limit: 1,
   });
 
+  const account = await stripe.accounts.create({});
+  if (!account) {
+    throw new Error('Failed to create Stripe Connect account');
+  }
+
   let tenantId: string;
   if (seedTenant.docs.length === 0) {
     const newTenant = await payload.create({
@@ -727,7 +733,7 @@ async function seed() {
       data: {
         name: 'Demo Store',
         slug: 'demo-store',
-        stripeConnectAccountId: 'acct_demo_seed',
+        stripeConnectAccountId: account.id,
         stripeDetailsSubmitted: true,
       },
     });
@@ -735,6 +741,14 @@ async function seed() {
   } else {
     tenantId = seedTenant.docs[0]!.id;
   }
+
+  await payload.update({
+    collection: 'users',
+    id: adminUser.id,
+    data: {
+      tenants: [{ tenant: tenantId }],
+    },
+  });
 
   for (const category of categories) {
     const existingParent = await payload.find({
