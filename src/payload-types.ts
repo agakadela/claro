@@ -231,6 +231,8 @@ export interface Category {
   createdAt: string;
 }
 /**
+ * Please note that products are not visible to customers until you submit your Stripe details.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "products".
  */
@@ -289,6 +291,10 @@ export interface Order {
   user: string | User;
   product: string | Product;
   stripeCheckoutSessionId: string;
+  /**
+   * The Stripe account ID for the order
+   */
+  stripeAccountId?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -513,6 +519,7 @@ export interface OrdersSelect<T extends boolean = true> {
   user?: T;
   product?: T;
   stripeCheckoutSessionId?: T;
+  stripeAccountId?: T;
   updatedAt?: T;
   createdAt?: T;
 }

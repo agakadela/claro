@@ -12,6 +12,11 @@ export const Products: CollectionConfig = {
       return Boolean((tenantOrId as Tenant).stripeDetailsSubmitted);
     },
   },
+  admin: {
+    useAsTitle: 'name',
+    description:
+      'Please note that products are not visible to customers until you submit your Stripe details.',
+  },
   fields: [
     {
       name: 'name',

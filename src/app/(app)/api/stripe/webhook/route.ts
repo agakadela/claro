@@ -38,7 +38,10 @@ export async function POST(request: Request) {
   }
   console.log(`✅ Stripe webhook received: ${event.type}`);
 
-  const permittedEvents: Stripe.Event.Type[] = ['checkout.session.completed'];
+  const permittedEvents: Stripe.Event.Type[] = [
+    'checkout.session.completed',
+    'account.updated',
+  ];
 
   const payloadEvent = await getPayload({ config });
   if (permittedEvents.includes(event.type)) {
@@ -67,6 +70,9 @@ export async function POST(request: Request) {
             {
               expand: ['line_items.data.price.product'],
             },
+            {
+              stripeAccount: event.account,
+            },
           );
 
           if (
@@ -87,6 +93,7 @@ export async function POST(request: Request) {
                   user: user.id,
                   product: lineItem.price.product.metadata.id,
                   stripeCheckoutSessionId: `${data.id}-${lineItem.id}`,
+                  stripeAccountId: event.account,
                   name: lineItem.price.product.name,
                 },
               });
@@ -104,6 +111,23 @@ export async function POST(request: Request) {
               throw error;
             }
           }
+
+          break;
+        }
+        case 'account.updated': {
+          const data = event.data.object as Stripe.Account;
+
+          await payloadEvent.update({
+            collection: 'tenants',
+            where: {
+              stripeConnectAccountId: {
+                equals: data.id,
+              },
+            },
+            data: {
+              stripeDetailsSubmitted: data.details_submitted,
+            },
+          });
 
           break;
         }

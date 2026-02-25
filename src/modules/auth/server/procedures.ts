@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { AUTH_TOKEN_NAME } from '../constants';
 import { registerSchema } from '../schemas';
 import { generateAuthCookie } from '../utils';
+import { stripe } from '@/lib/stripe';
 
 export const authRouter = createTRPCRouter({
   session: baseProcedure.query(async ({ ctx }) => {
@@ -33,12 +34,21 @@ export const authRouter = createTRPCRouter({
         });
       }
 
+      const account = await stripe.accounts.create({});
+
+      if (!account) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Failed to create Stripe Connect account',
+        });
+      }
+
       const tenant = await ctx.payload.create({
         collection: 'tenants',
         data: {
           name: input.username,
           slug: input.username,
-          stripeConnectAccountId: 'test_account_id',
+          stripeConnectAccountId: account.id,
         },
       });
 
@@ -75,7 +85,7 @@ export const authRouter = createTRPCRouter({
       z.object({
         password: z.string(),
         email: z.email(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const user = await ctx.payload.login({
