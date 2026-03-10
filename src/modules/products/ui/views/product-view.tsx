@@ -14,7 +14,7 @@ import { Fragment, useState } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { RichText } from '@payloadcms/richtext-lexical/react';
-import type { SerializedEditorState } from 'lexical';
+import { isLexicalContent } from '@/lib/lexical';
 
 const CartButton = dynamic(
   () => import('../components/cart-button').then((mod) => mod.CartButton),
@@ -185,10 +185,8 @@ export function ProductDetailView({
             <div className='p-6'>
               {typeof product.description === 'string' ? (
                 <p className='text-sm text-gray-500'>{product.description}</p>
-              ) : product.description ? (
-                <RichText
-                  data={product.description as unknown as SerializedEditorState}
-                />
+              ) : isLexicalContent(product.description) ? (
+                <RichText data={product.description} />
               ) : (
                 <p className='text-sm text-gray-500'>
                   No description available

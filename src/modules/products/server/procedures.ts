@@ -40,6 +40,11 @@ export const productsRouter = createTRPCRouter({
         });
       }
 
+      // isPrivate is intentionally NOT checked here. "Private" means hidden from
+      // marketplace discovery (getMany filters it out when no tenantSlug is given),
+      // but the product remains accessible by direct URL on the tenant's own store.
+      // If you want truly access-controlled products, add an isPrivate check below
+      // and confirm whether the caller context is marketplace or tenant storefront.
       const tenant =
         product.tenant && typeof product.tenant === 'object'
           ? (product.tenant as Tenant)
@@ -140,6 +145,9 @@ export const productsRouter = createTRPCRouter({
       };
       let sort: Sort = '-createdAt';
 
+      // TODO: implement real sort logic per variant
+      // trending → sort by review count or purchase volume (needs aggregation)
+      // for_you  → personalised ranking based on user's past purchases/categories
       if (input.sort === 'trending') {
         sort = '-createdAt';
       }

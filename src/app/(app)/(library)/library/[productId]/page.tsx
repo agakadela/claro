@@ -1,9 +1,11 @@
 import { getQueryClient, trpc, caller } from '@/trpc/server';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { redirect } from 'next/navigation';
-import { LibraryProductView } from '@/modules/library/ui/views/library-product-view';
+import {
+  LibraryProductView,
+  LibraryProductViewSkeleton,
+} from '@/modules/library/ui/views/library-product-view';
 import { Suspense } from 'react';
-import { LibraryProductViewSkeleton } from '@/modules/library/ui/views/library-product-view';
 
 export const dynamic = 'force-dynamic';
 
