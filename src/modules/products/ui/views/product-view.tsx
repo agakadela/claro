@@ -183,7 +183,9 @@ export function ProductDetailView({
             </div>
 
             <div className='p-6'>
-              {product.description ? (
+              {typeof product.description === 'string' ? (
+                <p className='text-sm text-gray-500'>{product.description}</p>
+              ) : product.description ? (
                 <RichText
                   data={product.description as unknown as SerializedEditorState}
                 />

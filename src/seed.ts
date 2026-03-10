@@ -3,6 +3,38 @@ import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 import { stripe } from '@/lib/stripe';
 
+function toLexicalDescription(text: string) {
+  return {
+    root: {
+      type: 'root',
+      children: [
+        {
+          type: 'paragraph',
+          children: [
+            {
+              type: 'text',
+              text,
+              format: 0,
+              detail: 0,
+              mode: 'normal',
+              style: '',
+              version: 1,
+            },
+          ],
+          direction: 'ltr' as const,
+          format: '' as const,
+          indent: 0,
+          version: 1,
+        },
+      ],
+      direction: 'ltr' as const,
+      format: '' as const,
+      indent: 0,
+      version: 1,
+    },
+  };
+}
+
 async function fetchImageBuffer(picsumId: number): Promise<Buffer> {
   const response = await fetch(`https://picsum.photos/id/${picsumId}/800/600`);
   if (!response.ok) {
@@ -854,7 +886,7 @@ async function seed() {
         collection: 'products',
         data: {
           name: product.name,
-          description: product.description,
+          description: toLexicalDescription(product.description),
           price: product.price,
           category: category.docs[0]?.id,
           refundPolicy: product.refundPolicy,

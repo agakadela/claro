@@ -33,7 +33,7 @@ export const productsRouter = createTRPCRouter({
         if (!isNotFound) throw error;
       }
 
-      if (!product) {
+      if (!product || product.isArchived) {
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: 'Product not found',
@@ -45,13 +45,6 @@ export const productsRouter = createTRPCRouter({
           ? (product.tenant as Tenant)
           : null;
       if (!tenant || tenant.slug !== input.tenantSlug) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Product not found',
-        });
-      }
-
-      if (product.isArchived) {
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: 'Product not found',
