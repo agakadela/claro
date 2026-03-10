@@ -25,7 +25,7 @@ export function CategoriesSidebar({
 }: CategoriesSidebarProps) {
   const trpc = useTRPC();
   const { data: categories } = useSuspenseQuery(
-    trpc.categories.getMany.queryOptions()
+    trpc.categories.getMany.queryOptions(),
   );
 
   const router = useRouter();

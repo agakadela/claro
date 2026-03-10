@@ -1,6 +1,7 @@
 import { isSuperAdmin } from '@/lib/access';
 import { CollectionConfig } from 'payload';
 import { Tenant } from '@/payload-types';
+import { lexicalEditor, UploadFeature } from '@payloadcms/richtext-lexical';
 
 export const Products: CollectionConfig = {
   slug: 'products',
@@ -11,6 +12,7 @@ export const Products: CollectionConfig = {
       if (!tenantOrId || typeof tenantOrId === 'string') return false;
       return Boolean((tenantOrId as Tenant).stripeDetailsSubmitted);
     },
+    delete: ({ req: { user } }) => isSuperAdmin(user),
   },
   admin: {
     useAsTitle: 'name',
@@ -25,7 +27,10 @@ export const Products: CollectionConfig = {
     },
     {
       name: 'description',
-      type: 'text',
+      type: 'richText',
+      admin: {
+        description: 'The description of the product',
+      },
     },
     {
       name: 'price',
@@ -82,9 +87,46 @@ export const Products: CollectionConfig = {
     {
       name: 'content',
       type: 'richText',
+      editor: lexicalEditor({
+        features: ({ defaultFeatures }) => [
+          ...defaultFeatures,
+          UploadFeature({
+            collections: {
+              media: {
+                fields: [
+                  {
+                    name: 'alt',
+                    type: 'text',
+                  },
+                ],
+              },
+            },
+          }),
+        ],
+      }),
       admin: {
         description:
           'Protected content for customers after purchase. Add product documentation, tutorials, downloadable files, etc. Supports Markdown and rich text.',
+      },
+    },
+    {
+      name: 'isArchived',
+      label: 'Archive',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description:
+          'Archive the product to prevent it from being visible to customers.',
+      },
+    },
+    {
+      name: 'isPrivate',
+      label: 'Private',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description:
+          'Make the product private to only be visible to the tenant and not to the public.',
       },
     },
   ],

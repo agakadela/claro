@@ -3,6 +3,7 @@ import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { redirect } from 'next/navigation';
 import { LibraryProductView } from '@/modules/library/ui/views/library-product-view';
 import { Suspense } from 'react';
+import { LibraryProductViewSkeleton } from '@/modules/library/ui/views/library-product-view';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,7 +28,7 @@ export default async function LibraryProductPage({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<LibraryProductViewSkeleton />}>
         <LibraryProductView productId={productId} />
       </Suspense>
     </HydrationBoundary>
