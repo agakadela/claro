@@ -13,6 +13,8 @@ import { CheckIcon, LinkIcon, ShoppingCartIcon, StarIcon } from 'lucide-react';
 import { Fragment, useState } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
+import { RichText } from '@payloadcms/richtext-lexical/react';
+import { isLexicalContent } from '@/lib/lexical';
 
 const CartButton = dynamic(
   () => import('../components/cart-button').then((mod) => mod.CartButton),
@@ -175,13 +177,14 @@ export function ProductDetailView({
                 <StarRating rating={product.reviewRating} />
               </div>
               <p className='text-sm text-gray-500'>
-                {product.reviewRating.toFixed(1)} ({product.reviewCount} reviews)
+                {product.reviewRating.toFixed(1)} ({product.reviewCount}{' '}
+                reviews)
               </p>
             </div>
 
             <div className='p-6'>
-              {product.description ? (
-                <p className='text-sm text-gray-500'>{product.description}</p>
+              {isLexicalContent(product.description) ? (
+                <RichText data={product.description} />
               ) : (
                 <p className='text-sm text-gray-500'>
                   No description available
@@ -221,7 +224,9 @@ export function ProductDetailView({
                   <h3 className='text-xl font-medium'>Ratings</h3>
                   <div className='flex items-center gap-x-1 font-medium'>
                     <StarIcon className='size-4 fill-yellow-500' />
-                    <span className='text-sm'>{product.reviewRating.toFixed(1)}</span>
+                    <span className='text-sm'>
+                      {product.reviewRating.toFixed(1)}
+                    </span>
                     <span className='text-sm'>
                       ({product.reviewCount} reviews)
                     </span>

@@ -33,13 +33,18 @@ export const productsRouter = createTRPCRouter({
         if (!isNotFound) throw error;
       }
 
-      if (!product) {
+      if (!product || product.isArchived) {
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: 'Product not found',
         });
       }
 
+      // isPrivate is intentionally NOT checked here. "Private" means hidden from
+      // marketplace discovery (getMany filters it out when no tenantSlug is given),
+      // but the product remains accessible by direct URL on the tenant's own store.
+      // If you want truly access-controlled products, add an isPrivate check below
+      // and confirm whether the caller context is marketplace or tenant storefront.
       const tenant =
         product.tenant && typeof product.tenant === 'object'
           ? (product.tenant as Tenant)
@@ -133,9 +138,16 @@ export const productsRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const where: Where = {};
+      const where: Where = {
+        isArchived: {
+          not_equals: true,
+        },
+      };
       let sort: Sort = '-createdAt';
 
+      // TODO: implement real sort logic per variant
+      // trending → sort by review count or purchase volume (needs aggregation)
+      // for_you  → personalised ranking based on user's past purchases/categories
       if (input.sort === 'trending') {
         sort = '-createdAt';
       }
@@ -162,6 +174,10 @@ export const productsRouter = createTRPCRouter({
       if (input.tenantSlug) {
         where['tenant.slug'] = {
           equals: input.tenantSlug,
+        };
+      } else {
+        where['isPrivate'] = {
+          not_equals: true,
         };
       }
 

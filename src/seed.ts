@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 import { stripe } from '@/lib/stripe';
+import { toLexicalDescription } from '@/lib/lexical';
 
 async function fetchImageBuffer(picsumId: number): Promise<Buffer> {
   const response = await fetch(`https://picsum.photos/id/${picsumId}/800/600`);
@@ -854,7 +855,7 @@ async function seed() {
         collection: 'products',
         data: {
           name: product.name,
-          description: product.description,
+          description: toLexicalDescription(product.description),
           price: product.price,
           category: category.docs[0]?.id,
           refundPolicy: product.refundPolicy,

@@ -179,3 +179,22 @@ export function ReviewForm({
     </Form>
   );
 }
+
+export function ReviewFormSkeleton() {
+  return (
+    <div className='flex flex-col gap-y-4'>
+      <p className='font-medium'>Like this product? Leave a review!</p>
+      <StarPicker disabled />
+      <Textarea placeholder='Write your review here...' disabled />
+      <Button
+        type='button'
+        variant='elevated'
+        disabled
+        size='lg'
+        className='bg-black text-white hover:bg-pink-400 hover:text-primary w-fit'
+      >
+        Submit your review
+      </Button>
+    </div>
+  );
+}

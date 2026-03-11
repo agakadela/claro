@@ -5,6 +5,8 @@ import { ArrowLeftIcon } from 'lucide-react';
 import { ReviewSidebar } from '@/modules/library/ui/components/review-sidebar';
 import { useTRPC } from '@/trpc/client';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { Suspense } from 'react';
+import { ReviewFormSkeleton } from '../components/review-form';
 
 export function LibraryProductView({ productId }: { productId: string }) {
   const trpc = useTRPC();
@@ -28,7 +30,9 @@ export function LibraryProductView({ productId }: { productId: string }) {
         <div className='grid grid-cols-1 lg:grid-cols-7 gap-4 lg:gap-16'>
           <div className='lg:col-span-2'>
             <div className='p-4 bg-white border rounded-md gap-4'>
-              <ReviewSidebar productId={productId} />
+              <Suspense fallback={<ReviewFormSkeleton />}>
+                <ReviewSidebar productId={productId} />
+              </Suspense>
             </div>
           </div>
           <div className='lg:col-span-5'>
@@ -38,6 +42,19 @@ export function LibraryProductView({ productId }: { productId: string }) {
           </div>
         </div>
       </section>
+    </div>
+  );
+}
+
+export function LibraryProductViewSkeleton() {
+  return (
+    <div className='min-h-screen bg-white'>
+      <nav className='p-4 bg-[#F4f4f0] w-full border-b'>
+        <Link href='/library' className='flex items-center gap-2'>
+          <ArrowLeftIcon className='size-4' />
+          <span className='text-base font-medium'>Back to library</span>
+        </Link>
+      </nav>
     </div>
   );
 }
