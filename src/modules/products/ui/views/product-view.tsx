@@ -183,9 +183,7 @@ export function ProductDetailView({
             </div>
 
             <div className='p-6'>
-              {typeof product.description === 'string' ? (
-                <p className='text-sm text-gray-500'>{product.description}</p>
-              ) : isLexicalContent(product.description) ? (
+              {isLexicalContent(product.description) ? (
                 <RichText data={product.description} />
               ) : (
                 <p className='text-sm text-gray-500'>

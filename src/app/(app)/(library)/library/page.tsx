@@ -14,7 +14,7 @@ export default async function LibraryPage() {
   }
 
   const queryClient = getQueryClient();
-  await queryClient.prefetchInfiniteQuery(
+  void queryClient.prefetchInfiniteQuery(
     trpc.library.getMany.infiniteQueryOptions({
       limit: DEFAULT_PRODUCTS_LIMIT,
     }),

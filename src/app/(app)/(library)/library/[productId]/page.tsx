@@ -23,10 +23,11 @@ export default async function LibraryProductPage({
   }
 
   const queryClient = getQueryClient();
-  await Promise.all([
-    queryClient.prefetchQuery(trpc.library.getOne.queryOptions({ productId })),
-    queryClient.prefetchQuery(trpc.reviews.getOne.queryOptions({ productId })),
-  ]);
+  void queryClient.prefetchQuery(
+    trpc.library.getOne.queryOptions({ productId }),
+  );
+  // reviews.getOne is intentionally not prefetched — ReviewSidebar fetches it
+  // client-side so the ReviewFormSkeleton boundary actually renders.
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
