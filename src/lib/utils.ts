@@ -49,11 +49,16 @@ export function sanitizeColor(color: string, fallback: string): string {
 
 export function generateTenantUrl(tenantSlug: string): string {
   if (process.env.NODE_ENV === 'development') {
-    return `${process.env.NEXT_PUBLIC_APP_URL!}/tenants/${tenantSlug}`;
+    const url = process.env.NEXT_PUBLIC_APP_URL;
+    if (!url) throw new Error('NEXT_PUBLIC_APP_URL required in development');
+
+    return `${url}/tenants/${tenantSlug}`;
   }
 
   const protocol = 'https';
   const domain = process.env.NEXT_PUBLIC_ROOT_DOMAIN!;
+  if (!domain)
+    throw new Error('NEXT_PUBLIC_ROOT_DOMAIN required in production');
 
   return `${protocol}://${tenantSlug}.${domain}`;
 }

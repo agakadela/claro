@@ -2,7 +2,6 @@ import { baseProcedure, createTRPCRouter } from '@/trpc/init';
 import { TRPCError } from '@trpc/server';
 import { headers as getHeaders, cookies as getCookies } from 'next/headers';
 import { z } from 'zod';
-import { AUTH_TOKEN_NAME } from '../constants';
 import { registerSchema } from '../schemas';
 import { generateAuthCookie } from '../utils';
 import { stripe } from '@/lib/stripe';
@@ -110,8 +109,9 @@ export const authRouter = createTRPCRouter({
       });
       return user;
     }),
-  logout: baseProcedure.mutation(async () => {
+  logout: baseProcedure.mutation(async ({ ctx }) => {
     const cookies = await getCookies();
-    cookies.delete(AUTH_TOKEN_NAME);
+    const cookieName = `${ctx.payload.config.cookiePrefix}-token`;
+    cookies.delete(cookieName);
   }),
 });
