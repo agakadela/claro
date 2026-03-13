@@ -42,9 +42,13 @@ export function CheckoutView({ tenantSlug }: { tenantSlug: string }) {
       },
       onError: (error) => {
         if (error.data?.code === 'UNAUTHORIZED') {
-          router.push(`${process.env.NEXT_PUBLIC_APP_URL!}/sign-in`);
+          const url = process.env.NEXT_PUBLIC_APP_URL;
+          if (url) {
+            window.location.assign(`${url}/sign-in`);
+          } else {
+            router.push('/sign-in');
+          }
         }
-        toast.error(error.message);
       },
     }),
   );
