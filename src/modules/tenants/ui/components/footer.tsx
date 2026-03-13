@@ -14,7 +14,7 @@ export function TenantFooter() {
         <p>
           Powered by{' '}
           <Link
-            href='/'
+            href={process.env.NEXT_PUBLIC_APP_URL!}
             className={cn(poppins.className, 'text-primary underline')}
           >
             Claro

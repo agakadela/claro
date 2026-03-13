@@ -42,8 +42,7 @@ export function CheckoutView({ tenantSlug }: { tenantSlug: string }) {
       },
       onError: (error) => {
         if (error.data?.code === 'UNAUTHORIZED') {
-          router.push('/auth/sign-in');
-          // TODO: modify when subdomains are implemented
+          router.push(`${process.env.NEXT_PUBLIC_APP_URL!}/sign-in`);
         }
         toast.error(error.message);
       },
