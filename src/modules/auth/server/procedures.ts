@@ -2,9 +2,8 @@ import { baseProcedure, createTRPCRouter } from '@/trpc/init';
 import { TRPCError } from '@trpc/server';
 import { headers as getHeaders, cookies as getCookies } from 'next/headers';
 import { z } from 'zod';
-import { AUTH_TOKEN_NAME } from '../constants';
 import { registerSchema } from '../schemas';
-import { generateAuthCookie } from '../utils';
+import { generateAuthCookie, getAuthCookieOptions } from '../utils';
 import { stripe } from '@/lib/stripe';
 
 export const authRouter = createTRPCRouter({
@@ -33,7 +32,6 @@ export const authRouter = createTRPCRouter({
           message: 'User already exists',
         });
       }
-
 
       let account: Awaited<ReturnType<typeof stripe.accounts.create>>;
       try {
@@ -110,8 +108,15 @@ export const authRouter = createTRPCRouter({
       });
       return user;
     }),
-  logout: baseProcedure.mutation(async () => {
+  logout: baseProcedure.mutation(async ({ ctx }) => {
     const cookies = await getCookies();
-    cookies.delete(AUTH_TOKEN_NAME);
+    const cookieName = `${ctx.payload.config.cookiePrefix}-token`;
+    const options = getAuthCookieOptions();
+    cookies.set({
+      name: cookieName,
+      value: '',
+      ...options,
+      maxAge: 0,
+    });
   }),
 });
