@@ -693,7 +693,7 @@ async function seedUser(
   return created.id;
 }
 
-export async function runSeed() {
+async function seed() {
   const payload = await getPayload({ config: configPromise });
 
   console.log('\n══════════════════════════════');
@@ -762,12 +762,10 @@ export async function runSeed() {
   console.log('══════════════════════════════\n');
 }
 
-// Run when executed directly (npm run db:seed)
-if (process.argv[1]?.includes('seed')) {
-  runSeed()
-    .then(() => process.exit(0))
-    .catch((error) => {
-      console.error(error);
-      process.exit(1);
-    });
+try {
+  await seed();
+  process.exit(0);
+} catch (error) {
+  console.error(error);
+  process.exit(1);
 }
