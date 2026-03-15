@@ -6,6 +6,13 @@ type PayloadNextConfig = NextConfig & { turbopack?: unknown };
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.blob.vercel-storage.com',
+        pathname: '/**',
+      },
+    ],
     domains: ['localhost', 'prd.place'],
   },
 };
