@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "generate:types": "payload generate:types",
-    "db:fresh": "rm -rf media && payload migrate:fresh",
+    "db:fresh": "payload migrate:fresh",
     "db:seed": "tsx src/seed.ts"
   },
   "dependencies": {
