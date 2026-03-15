@@ -1,8 +1,7 @@
 import { initTRPC, TRPCError } from '@trpc/server';
-import { getPayload } from 'payload';
 import { cache } from 'react';
-import configPromise from '@payload-config';
 import { headers as getHeaders } from 'next/headers';
+import { getPayloadCached } from '@/lib/payload';
 
 export const createTRPCContext = cache(async () => {
   /**
@@ -38,9 +37,7 @@ const t = initTRPC
 export const createTRPCRouter = t.router;
 export const createCallerFactory = t.createCallerFactory;
 export const baseProcedure = t.procedure.use(async ({ ctx, next }) => {
-  const payload = await getPayload({
-    config: configPromise,
-  });
+  const payload = await getPayloadCached();
   return next({
     ctx: { ...ctx, payload },
   });
