@@ -22,6 +22,13 @@ import { isSuperAdmin } from './lib/access';
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
+const hasBlobToken = Boolean(process.env.BLOB_READ_WRITE_TOKEN?.trim());
+
+if (process.env.NODE_ENV === 'production' && !hasBlobToken) {
+  throw new Error('BLOB_READ_WRITE_TOKEN is required in production for media uploads.');
+}
+
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -81,7 +88,7 @@ export default buildConfig({
       userHasAccessToAllTenants: (user): boolean => isSuperAdmin(user),
     }),
     vercelBlobStorage({
-      enabled: !!process.env.BLOB_READ_WRITE_TOKEN,
+      enabled: hasBlobToken,
       clientUploads: true,
       collections: {
         media: true,
