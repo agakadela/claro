@@ -14,7 +14,12 @@ const globalForPayload = globalThis as unknown as {
 
 export const getPayloadCached = () => {
   if (!globalForPayload.payload) {
-    globalForPayload.payload = getPayload({ config: configPromise });
+    globalForPayload.payload = getPayload({ config: configPromise }).catch(
+      (err) => {
+        globalForPayload.payload = undefined;
+        throw err;
+      },
+    );
   }
   return globalForPayload.payload;
 };
