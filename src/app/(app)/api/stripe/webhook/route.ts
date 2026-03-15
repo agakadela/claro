@@ -1,7 +1,6 @@
 import type { Stripe } from 'stripe';
-import { getPayload } from 'payload';
-import config from '@payload-config';
 import { NextResponse } from 'next/server';
+import { getPayloadCached } from '@/lib/payload';
 
 import { stripe } from '@/lib/stripe';
 import { ExpandedLineItem } from '@/modules/checkout/types';
@@ -43,7 +42,7 @@ export async function POST(request: Request) {
     'account.updated',
   ];
 
-  const payloadEvent = await getPayload({ config });
+  const payloadEvent = await getPayloadCached();
   if (permittedEvents.includes(event.type)) {
     let data: Stripe.Checkout.Session;
 

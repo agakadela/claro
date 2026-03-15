@@ -19,7 +19,9 @@ export function getAuthCookieOptions() {
     secure: process.env.NODE_ENV === 'production',
     maxAge: AUTH_TOKEN_MAX_AGE,
   };
-  if (process.env.NEXT_PUBLIC_ROOT_DOMAIN) {
+  // Only set domain in production. Local: omit domain so cookie works on localhost.
+  // domain must NOT include port (invalid per RFC).
+  if (process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_ROOT_DOMAIN) {
     options.domain = process.env.NEXT_PUBLIC_ROOT_DOMAIN;
   }
   return options;
