@@ -16,7 +16,7 @@ export function ProductListView({
   return (
     <div className='px-4 lg:px-12 py-8 flex flex-col gap-4'>
       <div className='flex flex-col justify-between lg:flex-row lg:items-center gap-y-2 lg:gap-y-0'>
-        <p className='text-2xl font-medium'>For you</p>
+        <p className='text-2xl font-medium'>Products</p>
         <ProductSort />
       </div>
       <div className='grid grid-cols-1 lg:grid-cols-6 xl:grid-cols-8 gap-y-6 gap-x-12'>

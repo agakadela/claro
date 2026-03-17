@@ -511,6 +511,141 @@ function log(section: string, msg: string) {
   console.log(`[${section}] ${msg}`);
 }
 
+const REVIEW_DESCRIPTIONS = [
+  'Exactly what I needed. Clear and actionable.',
+  'Solid content, well structured. Would recommend.',
+  'Good value for the price. Learned a lot.',
+  'Helpful course with practical examples.',
+  'Best purchase I made this year.',
+];
+
+async function seedReviews(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+  tenantIdMap: Record<string, string>,
+) {
+  const knowledgeHubId = tenantIdMap['knowledge-hub'];
+  if (!knowledgeHubId) return;
+
+  const productsRes = await payload.find({
+    collection: 'products',
+    where: { tenant: { equals: knowledgeHubId } },
+    limit: 6,
+    pagination: false,
+  });
+  const productIds = productsRes.docs.map((p) => p.id);
+
+  const usersRes = await payload.find({
+    collection: 'users',
+    where: {
+      email: {
+        in: [
+          'alice@example.com',
+          'bob@example.com',
+          'carol@example.com',
+          'admin@knowledge-hub.com',
+          'admin@creative-corner.com',
+        ],
+      },
+    },
+    limit: 5,
+    pagination: false,
+  });
+  const userIds = usersRes.docs.map((u) => u.id);
+  if (productIds.length === 0 || userIds.length === 0) return;
+
+  let created = 0;
+  const reviewsPerProduct = [5, 4, 3, 2, 1, 0];
+  for (let i = 0; i < productIds.length; i++) {
+    const productId = productIds[i]!;
+    const count = reviewsPerProduct[i] ?? 0;
+    for (let j = 0; j < count; j++) {
+      const userId = userIds[j % userIds.length]!;
+      const existing = await payload.find({
+        collection: 'reviews',
+        where: { product: { equals: productId }, user: { equals: userId } },
+        limit: 1,
+      });
+      if (existing.docs.length > 0) continue;
+
+      await payload.create({
+        collection: 'reviews',
+        data: {
+          description: REVIEW_DESCRIPTIONS[j % REVIEW_DESCRIPTIONS.length]!,
+          rating: 3 + (j % 3),
+          product: productId,
+          user: userId,
+        },
+        overrideAccess: true,
+      });
+      created++;
+    }
+  }
+  log('reviews', `  created ${created} reviews across ${productIds.length} products`);
+}
+
+async function seedOrders(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+  tenantIdMap: Record<string, string>,
+  customerIds: string[],
+) {
+  const tenantIds = Object.values(tenantIdMap);
+  if (tenantIds.length === 0 || customerIds.length === 0) return;
+
+  const productsRes = await payload.find({
+    collection: 'products',
+    where: { tenant: { in: tenantIds } },
+    limit: 6,
+    pagination: false,
+  });
+  const productIds = productsRes.docs.map((p) => p.id);
+  if (productIds.length === 0) return;
+
+  const tenantsRes = await payload.find({
+    collection: 'tenants',
+    where: { id: { in: tenantIds } },
+    limit: 10,
+    pagination: false,
+  });
+  const stripeAccountByTenant = Object.fromEntries(
+    tenantsRes.docs.map((t) => [t.id, t.stripeConnectAccountId ?? '']),
+  );
+
+  let created = 0;
+  const ordersPerProduct = [4, 3, 2, 1, 5, 0];
+  for (let i = 0; i < productIds.length; i++) {
+    const productId = productIds[i]!;
+    const product = productsRes.docs[i];
+    const tenantId = typeof product?.tenant === 'string' ? product.tenant : product?.tenant?.id;
+    const stripeAccountId = tenantId ? stripeAccountByTenant[tenantId] ?? '' : '';
+    const count = ordersPerProduct[i] ?? 0;
+
+    for (let j = 0; j < count; j++) {
+      const userId = customerIds[j % customerIds.length]!;
+      const sessionId = `cs_seed_${Date.now()}_${i}_${j}_${productId}`;
+      const existing = await payload.find({
+        collection: 'orders',
+        where: { stripeCheckoutSessionId: { equals: sessionId } },
+        limit: 1,
+      });
+      if (existing.docs.length > 0) continue;
+
+      await payload.create({
+        collection: 'orders',
+        data: {
+          name: `Order ${j + 1} for product`,
+          user: userId,
+          product: productId,
+          stripeCheckoutSessionId: sessionId,
+          ...(stripeAccountId ? { stripeAccountId } : {}),
+        },
+        overrideAccess: true,
+      });
+      created++;
+    }
+  }
+  log('orders', `  created ${created} orders across ${productIds.length} products`);
+}
+
 async function seedCategories(payload: Awaited<ReturnType<typeof getPayload>>) {
   log('categories', 'Seeding...');
 
@@ -730,9 +865,17 @@ async function seed() {
   }
 
   log('users', 'Seeding customers...');
+  const customerIds: string[] = [];
   for (const customer of CUSTOMERS) {
-    await seedUser(payload, customer, tenantIdMap);
+    const id = await seedUser(payload, customer, tenantIdMap);
+    customerIds.push(id);
   }
+
+  log('reviews', 'Seeding reviews...');
+  await seedReviews(payload, tenantIdMap);
+
+  log('orders', 'Seeding orders...');
+  await seedOrders(payload, tenantIdMap, customerIds);
 
   const totalProducts = TENANTS.reduce((acc, t) => acc + t.products.length, 0);
   const totalSubs = CATEGORIES.reduce(
@@ -753,6 +896,7 @@ async function seed() {
   console.log(
     `  Users        1 super-admin + ${TENANT_ADMINS.length} tenant-admins + ${CUSTOMERS.length} customers`,
   );
+  console.log('  Reviews & Orders  seeded with varying counts (trending/bestsellers)');
   console.log('\n  Credentials');
   console.log(`    ${SUPER_ADMIN.email}  /  ${SUPER_ADMIN.password}`);
   TENANT_ADMINS.forEach((u) =>

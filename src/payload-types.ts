@@ -292,6 +292,14 @@ export interface Product {
    * Make the product private to only be visible to the tenant and not to the public.
    */
   isPrivate?: boolean | null;
+  /**
+   * Auto-maintained by Reviews hook
+   */
+  reviewCount?: number | null;
+  /**
+   * Auto-maintained by Orders hook
+   */
+  orderCount?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -511,6 +519,8 @@ export interface ProductsSelect<T extends boolean = true> {
   content?: T;
   isArchived?: T;
   isPrivate?: T;
+  reviewCount?: T;
+  orderCount?: T;
   updatedAt?: T;
   createdAt?: T;
 }
