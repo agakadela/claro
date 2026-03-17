@@ -3,17 +3,21 @@ import { CollectionConfig } from 'payload';
 import type { Payload } from 'payload';
 
 const syncOrderCount = async (productId: string, payload: Payload) => {
-  const { totalDocs } = await payload.find({
-    collection: 'orders',
-    where: { product: { equals: productId } },
-    limit: 1,
-    pagination: true,
-  });
-  await payload.update({
-    collection: 'products',
-    id: productId,
-    data: { orderCount: totalDocs },
-  });
+  try {
+    const { totalDocs } = await payload.find({
+      collection: 'orders',
+      where: { product: { equals: productId } },
+      limit: 1,
+      pagination: true,
+    });
+    await payload.update({
+      collection: 'products',
+      id: productId,
+      data: { orderCount: totalDocs },
+    });
+  } catch (error) {
+    console.error('[Orders] syncOrderCount failed for product', productId, error);
+  }
 };
 
 export const Orders: CollectionConfig = {
