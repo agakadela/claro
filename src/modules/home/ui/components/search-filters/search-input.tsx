@@ -4,18 +4,22 @@ import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { BookmarkCheckIcon, ListFilterIcon, SearchIcon } from 'lucide-react';
 import { CategoriesSidebar } from './categories-sidebar';
-import { useState } from 'react';
+import { ChangeEventHandler, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useTRPC } from '@/trpc/client';
 import { useQuery } from '@tanstack/react-query';
-import { useProductsFilters } from '@/modules/products/hooks/use-products-filters';
 
 interface SearchInputProps {
   disabled?: boolean;
+  defaultSearch?: string;
+  onSearchChange?: ChangeEventHandler<HTMLInputElement>;
 }
-export function SearchInput({ disabled }: SearchInputProps) {
+export function SearchInput({
+  disabled,
+  defaultSearch,
+  onSearchChange,
+}: SearchInputProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [filters, setFilters] = useProductsFilters();
   const trpc = useTRPC();
   const { data: session } = useQuery(trpc.auth.session.queryOptions());
 
@@ -32,8 +36,8 @@ export function SearchInput({ disabled }: SearchInputProps) {
           type='text'
           placeholder='Search products'
           disabled={disabled}
-          value={filters.search}
-          onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+          value={defaultSearch}
+          onChange={onSearchChange}
         />
       </div>
 
@@ -54,6 +58,22 @@ export function SearchInput({ disabled }: SearchInputProps) {
           </Link>
         </Button>
       ) : null}
+    </div>
+  );
+}
+
+export function SearchInputSkeleton() {
+  return (
+    <div className='flex items-center gap-2 w-full'>
+      <div className='relative w-full'>
+        <SearchIcon className='size-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2' />
+        <Input
+          className='pl-8'
+          type='text'
+          placeholder='Search products'
+          disabled
+        />
+      </div>
     </div>
   );
 }
