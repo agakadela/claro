@@ -43,9 +43,7 @@ export function SearchFilters() {
     >
       <SearchInput
         defaultSearch={filters.search}
-        onSearchChange={(e) =>
-          setFilters({ ...filters, search: e.target.value })
-        }
+        onSearchChange={(e) => setFilters({ search: e.target.value })}
       />
       <div className='hidden lg:block'>
         <CategoriesMenu activeCategory={activeCategoryData} />
