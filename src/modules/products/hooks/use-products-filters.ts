@@ -16,10 +16,11 @@ export const params = {
     .withOptions({ clearOnDefault: true })
     .withDefault([]),
   sort: parseAsStringLiteral(sortValues).withDefault('for_you'),
+  search: parseAsString.withOptions({ clearOnDefault: true }).withDefault(''),
 };
 
 export function useProductsFilters() {
-  return useQueryStates(params);
+  return useQueryStates(params, { shallow: true });
 }
 
 export const loadProductsFilters = createLoader(params);

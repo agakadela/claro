@@ -8,12 +8,14 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useTRPC } from '@/trpc/client';
 import { useQuery } from '@tanstack/react-query';
+import { useProductsFilters } from '@/modules/products/hooks/use-products-filters';
 
 interface SearchInputProps {
   disabled?: boolean;
 }
 export function SearchInput({ disabled }: SearchInputProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [filters, setFilters] = useProductsFilters();
   const trpc = useTRPC();
   const { data: session } = useQuery(trpc.auth.session.queryOptions());
 
@@ -30,6 +32,8 @@ export function SearchInput({ disabled }: SearchInputProps) {
           type='text'
           placeholder='Search products'
           disabled={disabled}
+          value={filters.search}
+          onChange={(e) => setFilters({ ...filters, search: e.target.value })}
         />
       </div>
 

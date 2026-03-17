@@ -134,6 +134,7 @@ export const productsRouter = createTRPCRouter({
         maxPrice: z.number().nullable().optional(),
         tags: z.array(z.string()).nullable().optional(),
         sort: z.enum(sortValues).nullable().optional(),
+        search: z.string().nullable().optional(),
         tenantSlug: z.string().nullable().optional(),
       }),
     )
@@ -223,6 +224,12 @@ export const productsRouter = createTRPCRouter({
             in: [parentCategory.slug, ...subcategoriesSlugs],
           };
         }
+      }
+
+      if (input.search) {
+        where['name'] = {
+          contains: input.search,
+        };
       }
 
       const products = await ctx.payload.find({
