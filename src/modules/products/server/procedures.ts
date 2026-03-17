@@ -145,19 +145,12 @@ export const productsRouter = createTRPCRouter({
         },
       };
       let sort: Sort = '-createdAt';
-
-      // TODO: implement real sort logic per variant
-      // trending → sort by review count or purchase volume (needs aggregation)
-      // for_you  → personalised ranking based on user's past purchases/categories
       if (input.sort === 'trending') {
-        sort = '-createdAt';
+        sort = '-reviewCount';
+      } else if (input.sort === 'bestsellers') {
+        sort = '-orderCount';
       }
-      if (input.sort === 'newest') {
-        sort = '-createdAt';
-      }
-      if (input.sort === 'for_you') {
-        sort = '-createdAt';
-      }
+      // 'newest' and default: -createdAt (already set above)
 
       if (input.minPrice) {
         where.price = {

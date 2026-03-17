@@ -1,5 +1,20 @@
 import { isSuperAdmin } from '@/lib/access';
 import { CollectionConfig } from 'payload';
+import type { Payload } from 'payload';
+
+const syncOrderCount = async (productId: string, payload: Payload) => {
+  const { totalDocs } = await payload.find({
+    collection: 'orders',
+    where: { product: { equals: productId } },
+    limit: 1,
+    pagination: true,
+  });
+  await payload.update({
+    collection: 'products',
+    id: productId,
+    data: { orderCount: totalDocs },
+  });
+};
 
 export const Orders: CollectionConfig = {
   slug: 'orders',
@@ -47,4 +62,18 @@ export const Orders: CollectionConfig = {
       },
     },
   ],
+  hooks: {
+    afterChange: [
+      async ({ doc, req }) => {
+        const id = typeof doc.product === 'string' ? doc.product : doc.product.id;
+        await syncOrderCount(id, req.payload);
+      },
+    ],
+    afterDelete: [
+      async ({ doc, req }) => {
+        const id = typeof doc.product === 'string' ? doc.product : doc.product.id;
+        await syncOrderCount(id, req.payload);
+      },
+    ],
+  },
 };

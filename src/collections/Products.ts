@@ -129,5 +129,25 @@ export const Products: CollectionConfig = {
           'Make the product private to only be visible to the tenant and not to the public.',
       },
     },
+    {
+      name: 'reviewCount',
+      type: 'number',
+      defaultValue: 0,
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+        description: 'Auto-maintained by Reviews hook',
+      },
+    },
+    {
+      name: 'orderCount',
+      type: 'number',
+      defaultValue: 0,
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+        description: 'Auto-maintained by Orders hook',
+      },
+    },
   ],
 };

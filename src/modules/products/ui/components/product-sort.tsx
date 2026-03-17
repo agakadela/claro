@@ -39,9 +39,9 @@ export function ProductSort() {
   return (
     <div className='flex items-center gap-2'>
       <SortButton
-        value='for_you'
-        onClick={() => setFilters({ sort: 'for_you' })}
-        isActive={filters.sort === 'for_you'}
+        value='bestsellers'
+        onClick={() => setFilters({ sort: 'bestsellers' })}
+        isActive={filters.sort === 'bestsellers'}
       />
       <SortButton
         value='newest'
