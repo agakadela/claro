@@ -2,6 +2,7 @@
 
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { useTRPC } from '@/trpc/client';
+import { useDebouncedValue } from '@/modules/products/hooks/use-debounced-value';
 import { useProductsFilters } from '../../hooks/use-products-filters';
 import { ProductCard, ProductCardSkeleton } from './product-card';
 import { DEFAULT_PRODUCTS_LIMIT } from '../../constants';
@@ -26,6 +27,8 @@ export function ProductsList({
   tenantSlug?: string;
 }) {
   const [filters] = useProductsFilters();
+  const debouncedSearch = useDebouncedValue(filters.search, 300);
+  const queryFilters = { ...filters, search: debouncedSearch };
   const trpc = useTRPC();
   const {
     data: products,
@@ -34,7 +37,7 @@ export function ProductsList({
     fetchNextPage,
   } = useSuspenseInfiniteQuery(
     trpc.products.getMany.infiniteQueryOptions(
-      { ...filters, category, tenantSlug, limit: DEFAULT_PRODUCTS_LIMIT },
+      { ...queryFilters, category, tenantSlug, limit: DEFAULT_PRODUCTS_LIMIT },
       {
         getNextPageParam: (lastPage) =>
           lastPage.hasNextPage ? lastPage.nextPage : undefined,
