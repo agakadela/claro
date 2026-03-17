@@ -64,15 +64,31 @@ export const Reviews: CollectionConfig = {
   ],
   hooks: {
     afterChange: [
-      async ({ doc, req }) => {
-        const id = typeof doc.product === 'string' ? doc.product : doc.product.id;
-        await syncReviewCount(id, req.payload);
+      async ({ doc, req, previousDoc, operation }) => {
+        const currentId =
+          typeof doc.product === 'string'
+            ? doc.product
+            : doc.product?.id;
+        const previousId =
+          typeof previousDoc?.product === 'string'
+            ? previousDoc.product
+            : previousDoc?.product?.id;
+
+        if (operation === 'update' && previousId && previousId !== currentId) {
+          await syncReviewCount(previousId, req.payload);
+        }
+        if (currentId) {
+          await syncReviewCount(currentId, req.payload);
+        }
       },
     ],
     afterDelete: [
       async ({ doc, req }) => {
-        const id = typeof doc.product === 'string' ? doc.product : doc.product.id;
-        await syncReviewCount(id, req.payload);
+        const id =
+          typeof doc.product === 'string' ? doc.product : doc.product?.id;
+        if (id) {
+          await syncReviewCount(id, req.payload);
+        }
       },
     ],
   },

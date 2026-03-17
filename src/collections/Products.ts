@@ -133,6 +133,9 @@ export const Products: CollectionConfig = {
       name: 'reviewCount',
       type: 'number',
       defaultValue: 0,
+      access: {
+        update: () => false,
+      },
       admin: {
         readOnly: true,
         position: 'sidebar',
@@ -143,6 +146,9 @@ export const Products: CollectionConfig = {
       name: 'orderCount',
       type: 'number',
       defaultValue: 0,
+      access: {
+        update: () => false,
+      },
       admin: {
         readOnly: true,
         position: 'sidebar',
