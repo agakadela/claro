@@ -14,7 +14,7 @@ export async function POST(request: Request) {
 
     if (!signature) {
       return NextResponse.json(
-        { message: 'Missing webhook configuration' },
+        { message: 'Missing stripe-signature header' },
         { status: 400 },
       );
     }
