@@ -2,6 +2,7 @@ import type { Stripe } from 'stripe';
 import { NextResponse } from 'next/server';
 import { getPayloadCached } from '@/lib/payload';
 
+import { env } from '@/env';
 import { stripe } from '@/lib/stripe';
 import { ExpandedLineItem } from '@/modules/checkout/types';
 
@@ -10,9 +11,8 @@ export async function POST(request: Request) {
 
   try {
     const signature = request.headers.get('stripe-signature');
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-    if (!signature || !webhookSecret) {
+    if (!signature) {
       return NextResponse.json(
         { message: 'Missing webhook configuration' },
         { status: 400 },
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     event = stripe.webhooks.constructEvent(
       await (await request.blob()).text(),
       signature,
-      webhookSecret,
+      env.STRIPE_WEBHOOK_SECRET,
     );
   } catch (error) {
     const errorMessage =
