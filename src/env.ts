@@ -11,13 +11,7 @@ const serverEnvSchema = z
       .enum(['development', 'test', 'production'])
       .default('development'),
     // Payload
-    PAYLOAD_SECRET: z
-      .string()
-      .trim()
-      .min(
-        32,
-        'PAYLOAD_SECRET must be at least 32 characters for session security',
-      ),
+    PAYLOAD_SECRET: z.string().trim().min(1, 'PAYLOAD_SECRET is required'),
     DATABASE_URI: z
       .string()
       .trim()
