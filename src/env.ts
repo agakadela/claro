@@ -22,6 +22,12 @@ const serverEnvSchema = z
       .string()
       .trim()
       .min(1, 'STRIPE_WEBHOOK_SECRET is required for webhooks'),
+    // AI
+    ANTHROPIC_API_KEY: z.string().trim().optional(),
+    // Feature flags
+    NEXT_PUBLIC_FEATURE_AI_REVIEW_HELPER: z
+      .enum(['true', 'false'])
+      .default('false'),
     // Multi-tenant / URLs
     NEXT_PUBLIC_APP_URL: z
       .string()
@@ -35,6 +41,16 @@ const serverEnvSchema = z
       .enum(['true', 'false'])
       .default('false'),
   })
+  .refine(
+    (data) =>
+      data.NEXT_PUBLIC_FEATURE_AI_REVIEW_HELPER !== 'true' ||
+      Boolean(data.ANTHROPIC_API_KEY?.trim()),
+    {
+      message:
+        'ANTHROPIC_API_KEY is required when NEXT_PUBLIC_FEATURE_AI_REVIEW_HELPER is enabled',
+      path: ['ANTHROPIC_API_KEY'],
+    },
+  )
   .refine(
     (data) =>
       data.NODE_ENV !== 'production' ||
@@ -64,6 +80,9 @@ function validateEnv(): z.infer<typeof serverEnvSchema> {
     BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+    ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
+    NEXT_PUBLIC_FEATURE_AI_REVIEW_HELPER:
+      process.env.NEXT_PUBLIC_FEATURE_AI_REVIEW_HELPER,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_ROOT_DOMAIN: process.env.NEXT_PUBLIC_ROOT_DOMAIN,
     NEXT_PUBLIC_FEATURE_SUBDOMAIN_ROUTING:

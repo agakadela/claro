@@ -17,11 +17,13 @@ export default async function TenantPage({
 
   const queryClient = getQueryClient();
   void queryClient.prefetchInfiniteQuery(
-    trpc.products.getMany.infiniteQueryOptions({
-      ...filters,
-      tenantSlug: slug,
-      limit: DEFAULT_PRODUCTS_LIMIT,
-    }),
+    trpc.products.getMany.infiniteQueryOptions(
+      { ...filters, tenantSlug: slug, limit: DEFAULT_PRODUCTS_LIMIT },
+      {
+        getNextPageParam: (lastPage) =>
+          lastPage.hasNextPage ? lastPage.nextPage : undefined,
+      },
+    ),
   );
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

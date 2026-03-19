@@ -15,9 +15,13 @@ export default async function LibraryPage() {
 
   const queryClient = getQueryClient();
   void queryClient.prefetchInfiniteQuery(
-    trpc.library.getMany.infiniteQueryOptions({
-      limit: DEFAULT_PRODUCTS_LIMIT,
-    }),
+    trpc.library.getMany.infiniteQueryOptions(
+      { limit: DEFAULT_PRODUCTS_LIMIT },
+      {
+        getNextPageParam: (lastPage) =>
+          lastPage.hasNextPage ? lastPage.nextPage : undefined,
+      },
+    ),
   );
 
   return (
