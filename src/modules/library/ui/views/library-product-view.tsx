@@ -7,6 +7,8 @@ import { useTRPC } from '@/trpc/client';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense } from 'react';
 import { ReviewFormSkeleton } from '../components/review-form';
+import { RichText } from '@payloadcms/richtext-lexical/react';
+import { isLexicalContent } from '@/lib/lexical';
 
 export function LibraryProductView({ productId }: { productId: string }) {
   const trpc = useTRPC();
@@ -36,9 +38,13 @@ export function LibraryProductView({ productId }: { productId: string }) {
             </div>
           </div>
           <div className='lg:col-span-5'>
-            <div className='font-medium italic text-muted-foreground'>
-              Description
-            </div>
+            {isLexicalContent(product.content) ? (
+              <RichText data={product.content} />
+            ) : (
+              <p className='text-sm text-muted-foreground'>
+                No content available for this product.
+              </p>
+            )}
           </div>
         </div>
       </section>
