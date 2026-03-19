@@ -4,7 +4,25 @@ import type { CollectionConfig } from 'payload';
 export const Tenants: CollectionConfig = {
   slug: 'tenants',
   access: {
+    read: ({ req: { user } }) => {
+      if (isSuperAdmin(user)) return true;
+      if (!user) return false;
+      const tenantIds = (user.tenants ?? [])
+        .map(({ tenant }) => (typeof tenant === 'string' ? tenant : tenant?.id))
+        .filter(Boolean);
+      if (!tenantIds.length) return false;
+      return { id: { in: tenantIds } };
+    },
     create: ({ req: { user } }) => isSuperAdmin(user),
+    update: ({ req: { user } }) => {
+      if (isSuperAdmin(user)) return true;
+      if (!user?.tenants?.length) return false;
+      const tenantIds = user.tenants
+        .map(({ tenant }) => (typeof tenant === 'string' ? tenant : tenant?.id))
+        .filter(Boolean);
+      if (!tenantIds.length) return false;
+      return { id: { in: tenantIds } };
+    },
     delete: ({ req: { user } }) => isSuperAdmin(user),
   },
   admin: {
