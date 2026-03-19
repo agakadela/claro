@@ -1,3 +1,4 @@
+import './src/env';
 import { withPayload } from '@payloadcms/next/withPayload';
 import type { NextConfig } from 'next';
 
@@ -12,8 +13,17 @@ const nextConfig: NextConfig = {
         hostname: '**.blob.vercel-storage.com',
         pathname: '/**',
       },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'prd.place',
+        pathname: '/**',
+      },
     ],
-    domains: ['localhost', 'prd.place'],
   },
 };
 

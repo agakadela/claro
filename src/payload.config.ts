@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import sharp from 'sharp';
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob';
 
+import { env } from './env';
 import { Users } from './collections/Users';
 import { Media } from './collections/Media';
 import { Categories } from './collections/Categories';
@@ -22,12 +23,7 @@ import { isSuperAdmin } from './lib/access';
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
-const hasBlobToken = Boolean(process.env.BLOB_READ_WRITE_TOKEN?.trim());
-
-if (process.env.NODE_ENV === 'production' && !hasBlobToken) {
-  throw new Error('BLOB_READ_WRITE_TOKEN is required in production for media uploads.');
-}
-
+const hasBlobToken = Boolean(env.BLOB_READ_WRITE_TOKEN?.trim());
 
 export default buildConfig({
   admin: {
@@ -66,12 +62,12 @@ export default buildConfig({
       }),
     ],
   }),
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: env.PAYLOAD_SECRET,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: mongooseAdapter({
-    url: process.env.DATABASE_URI || '',
+    url: env.DATABASE_URI,
     connectOptions: {
       maxPoolSize: 10, // Cap connections per Payload instance; default 100 causes explosion in serverless/dev
     },
@@ -93,7 +89,7 @@ export default buildConfig({
       collections: {
         media: true,
       },
-      token: process.env.BLOB_READ_WRITE_TOKEN,
+      token: env.BLOB_READ_WRITE_TOKEN,
     }),
   ],
 });
