@@ -166,7 +166,7 @@ export const reviewsRouter = createTRPCRouter({
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Review not found' });
       }
 
-      if (existingReview.user !== ctx.session.user.id) {
+      if (String(existingReview.user) !== ctx.session.user.id) {
         throw new TRPCError({
           code: 'FORBIDDEN',
           message: 'You are not allowed to update this review',
