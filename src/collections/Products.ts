@@ -6,11 +6,21 @@ import { lexicalEditor, UploadFeature } from '@payloadcms/richtext-lexical';
 export const Products: CollectionConfig = {
   slug: 'products',
   access: {
+    read: () => true,
     create: ({ req: { user } }) => {
       if (isSuperAdmin(user)) return true;
       const tenantOrId = user?.tenants?.[0]?.tenant;
       if (!tenantOrId || typeof tenantOrId === 'string') return false;
       return Boolean((tenantOrId as Tenant).stripeDetailsSubmitted);
+    },
+    update: ({ req: { user } }) => {
+      if (isSuperAdmin(user)) return true;
+      if (!user?.tenants?.length) return false;
+      const tenantIds = user.tenants
+        .map(({ tenant }) => (typeof tenant === 'string' ? tenant : tenant?.id))
+        .filter(Boolean);
+      if (!tenantIds.length) return false;
+      return { tenant: { in: tenantIds } };
     },
     delete: ({ req: { user } }) => isSuperAdmin(user),
   },
