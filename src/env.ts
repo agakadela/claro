@@ -1,10 +1,6 @@
 import 'dotenv/config';
 import { z } from 'zod';
 
-/**
- * Server-side env validation. Fails fast at startup if required vars are missing.
- * Import in next.config.ts (build/dev/start) and payload.config.ts (Payload CLI).
- */
 const serverEnvSchema = z
   .object({
     NODE_ENV: z
