@@ -31,6 +31,9 @@ const serverEnvSchema = z
       .string()
       .trim()
       .min(1, 'NEXT_PUBLIC_ROOT_DOMAIN is required for subdomain routing'),
+    NEXT_PUBLIC_FEATURE_SUBDOMAIN_ROUTING: z
+      .enum(['true', 'false'])
+      .default('false'),
   })
   .refine(
     (data) =>
@@ -63,6 +66,8 @@ function validateEnv(): z.infer<typeof serverEnvSchema> {
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_ROOT_DOMAIN: process.env.NEXT_PUBLIC_ROOT_DOMAIN,
+    NEXT_PUBLIC_FEATURE_SUBDOMAIN_ROUTING:
+      process.env.NEXT_PUBLIC_FEATURE_SUBDOMAIN_ROUTING,
   });
 
   if (!parsed.success) {
