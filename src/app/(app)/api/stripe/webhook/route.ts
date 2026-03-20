@@ -51,6 +51,13 @@ export async function POST(request: Request) {
         case 'checkout.session.completed': {
           data = event.data.object;
 
+          if (data.payment_status !== 'paid') {
+            console.log(
+              `Skipping session ${data.id}: payment_status is ${data.payment_status}`,
+            );
+            break;
+          }
+
           if (!data.metadata?.userId) {
             throw new Error('User ID is required');
           }
@@ -85,12 +92,20 @@ export async function POST(request: Request) {
             .data as ExpandedLineItem[];
 
           for (const lineItem of lineItems) {
+            const productId = lineItem.price.product.metadata.id;
+            if (!productId) {
+              console.log(
+                `Skipping line item ${lineItem.id}: missing product metadata.id`,
+              );
+              continue;
+            }
+
             try {
               await payloadEvent.create({
                 collection: 'orders',
                 data: {
                   user: user.id,
-                  product: lineItem.price.product.metadata.id,
+                  product: productId,
                   stripeCheckoutSessionId: `${data.id}-${lineItem.id}`,
                   stripeAccountId: event.account,
                   name: lineItem.price.product.name,
@@ -98,10 +113,12 @@ export async function POST(request: Request) {
               });
             } catch (error) {
               // Skip if order already exists (duplicate webhook)
-              if (
-                error instanceof Error &&
-                error.message.includes('duplicate')
-              ) {
+              const isDuplicate =
+                typeof error === 'object' &&
+                error !== null &&
+                'code' in error &&
+                (error as { code: unknown }).code === 11000;
+              if (isDuplicate) {
                 console.log(
                   `Order already exists for session ${data.id}, line item ${lineItem.id}`,
                 );
