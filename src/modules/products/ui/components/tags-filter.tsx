@@ -24,7 +24,7 @@ export function TagsFilter({ tags, onTagsChange }: TagsFilterProps) {
       { limit: DEFAULT_TAGS_LIMIT },
       {
         getNextPageParam: (lastPage) =>
-          lastPage.docs.length > 0 ? lastPage.nextPage : undefined,
+          lastPage.hasNextPage ? lastPage.nextPage : undefined,
       }
     )
   );

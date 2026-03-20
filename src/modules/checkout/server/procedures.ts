@@ -173,7 +173,7 @@ export const checkoutRouter = createTRPCRouter({
                 stripeAccountId: tenant.stripeConnectAccountId,
                 id: product.id,
                 name: product.name,
-                price: product.price,
+                price: String(product.price),
               } as ProductMetadata,
             },
             unit_amount: Math.round(product.price * 100),
