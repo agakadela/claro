@@ -22,6 +22,8 @@ import {
 } from '@/components/ui/form';
 import { toast } from 'sonner';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { SparklesIcon } from 'lucide-react';
+import { ReviewDraft } from '@/modules/reviews/schemas';
 
 const reviewSchema = z.object({
   description: z
@@ -48,9 +50,24 @@ export function ReviewForm({
   const [reviewId, setReviewId] = useState<string | null>(
     initialReview?.id ?? null,
   );
+  const [pendingDraft, setPendingDraft] = useState<ReviewDraft | null>(null);
 
   const trpc = useTRPC();
   const queryClient = useQueryClient();
+
+  const form = useForm<z.infer<typeof reviewSchema>>({
+    resolver: zodResolver(reviewSchema),
+    defaultValues: {
+      description: initialReview?.description ?? '',
+      rating: initialReview?.rating ?? 0,
+    },
+  });
+
+  function applyDraft(draft: ReviewDraft) {
+    form.setValue('description', draft.description);
+    form.setValue('rating', draft.rating);
+    setPendingDraft(null);
+  }
 
   const createReviewMutation = useMutation(
     trpc.reviews.create.mutationOptions({
@@ -60,6 +77,22 @@ export function ReviewForm({
           trpc.reviews.getOne.queryOptions({ productId }),
         );
         setIsPreview(true);
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    }),
+  );
+
+  const generateDraftMutation = useMutation(
+    trpc.reviews.generateReviewDraft.mutationOptions({
+      onSuccess: (draft) => {
+        const currentDescription = form.getValues('description');
+        if (currentDescription.trim()) {
+          setPendingDraft(draft);
+        } else {
+          applyDraft(draft);
+        }
       },
       onError: (error) => {
         toast.error(error.message);
@@ -81,14 +114,6 @@ export function ReviewForm({
       },
     }),
   );
-
-  const form = useForm<z.infer<typeof reviewSchema>>({
-    resolver: zodResolver(reviewSchema),
-    defaultValues: {
-      description: initialReview?.description ?? '',
-      rating: initialReview?.rating ?? 0,
-    },
-  });
 
   function onSubmit(values: z.infer<typeof reviewSchema>) {
     if (reviewId) {
@@ -150,19 +175,61 @@ export function ReviewForm({
           )}
         />
         {!isPreview && (
-          <Button
-            type='submit'
-            variant='elevated'
-            disabled={
-              createReviewMutation.isPending ||
-              updateReviewMutation.isPending ||
-              form.formState.isSubmitting
-            }
-            size='lg'
-            className='bg-black text-white hover:bg-pink-400 hover:text-primary w-fit'
-          >
-            {reviewId ? 'Update your review' : 'Submit your review'}
-          </Button>
+          <div className='flex flex-col gap-y-3'>
+            {process.env.NEXT_PUBLIC_FEATURE_AI_REVIEW_HELPER === 'true' && (
+              <Button
+                type='button'
+                variant='outline'
+                size='lg'
+                className='w-fit'
+                disabled={generateDraftMutation.isPending}
+                onClick={() => generateDraftMutation.mutate({ productId })}
+              >
+                <SparklesIcon className='size-4' />
+                {generateDraftMutation.isPending ? 'Generating...' : 'AI Help'}
+              </Button>
+            )}
+            {pendingDraft && (
+              <div className='rounded-md border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm'>
+                <p className='font-medium text-yellow-800'>
+                  This will replace your current draft.
+                </p>
+                <div className='mt-2 flex gap-2'>
+                  <Button
+                    type='button'
+                    size='sm'
+                    variant='elevated'
+                    className='bg-black text-white hover:bg-pink-400 hover:text-primary'
+                    onClick={() => applyDraft(pendingDraft)}
+                  >
+                    Apply
+                  </Button>
+                  <Button
+                    type='button'
+                    size='sm'
+                    variant='outline'
+                    onClick={() => setPendingDraft(null)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
+            <Button
+              type='submit'
+              variant='elevated'
+              disabled={
+                createReviewMutation.isPending ||
+                updateReviewMutation.isPending ||
+                generateDraftMutation.isPending ||
+                form.formState.isSubmitting
+              }
+              size='lg'
+              className='bg-black text-white hover:bg-pink-400 hover:text-primary w-fit'
+            >
+              {reviewId ? 'Update your review' : 'Submit your review'}
+            </Button>
+          </div>
         )}
       </form>
       {isPreview && (

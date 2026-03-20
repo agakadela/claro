@@ -18,7 +18,7 @@ export default async function HomePage({
       { ...filters, limit: DEFAULT_PRODUCTS_LIMIT },
       {
         getNextPageParam: (lastPage) =>
-          lastPage.docs.length > 0 ? lastPage.nextPage : undefined,
+          lastPage.hasNextPage ? lastPage.nextPage : undefined,
       }
     )
   );

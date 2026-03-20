@@ -55,6 +55,28 @@ export function toLexicalDescription(text: string): PayloadRichTextValue {
 }
 
 /**
+ * Extracts plain text from a Payload richText Lexical value.
+ * Used to build AI prompts from product description/content fields.
+ */
+export function lexicalToPlainText(value: unknown): string {
+  if (!isLexicalContent(value)) return '';
+
+  function extractText(node: unknown): string {
+    if (typeof node !== 'object' || node === null) return '';
+    const n = node as Record<string, unknown>;
+    if (n.type === 'text' && typeof n.text === 'string') return n.text;
+    if (Array.isArray(n.children)) {
+      return n.children.map(extractText).filter(Boolean).join(' ');
+    }
+    return '';
+  }
+
+  const root = (value as unknown as Record<string, unknown>).root as Record<string, unknown>;
+  if (!Array.isArray(root.children)) return '';
+  return root.children.map(extractText).join('\n').trim();
+}
+
+/**
  * Type guard for Lexical editor state objects stored in Payload richText fields.
  * Validates the minimum shape before passing to the <RichText /> component —
  * avoids blind double-casts and fails loudly if Payload's schema ever changes.
