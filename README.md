@@ -6,11 +6,21 @@ A multi-tenant digital product marketplace built with Next.js 15, Payload CMS 3,
 
 ## Screenshots
 
-<!-- Marketplace homepage with filters -->
-<!-- Tenant storefront -->
-<!-- Product page -->
-<!-- Customer library with purchased content -->
-<!-- Review form with AI Helper -->
+### Marketplace (filters & browse)
+
+![Marketplace homepage with category filters](./docs/screenshots/claro1.png)
+
+### Creator storefront
+
+![Tenant storefront](./docs/screenshots/claro2.png)
+
+### Product detail
+
+![Product page](./docs/screenshots/claro3.png)
+
+### Customer library
+
+![Library with purchased content](./docs/screenshots/claro4.png)
 
 ---
 
