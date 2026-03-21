@@ -10,70 +10,76 @@ A multi-tenant digital product marketplace built with Next.js 15, Payload CMS 3,
 
 ![Marketplace homepage with category filters](./docs/screenshots/claro1.png)
 
-### Creator storefront
+### Product Page
 
-![Tenant storefront](./docs/screenshots/claro2.png)
+![Product Page](./docs/screenshots/claro2.png)
 
-### Product detail
+### Review Form With AI Helper
 
-![Product page](./docs/screenshots/claro3.png)
+![Review form with AI Helper](./docs/screenshots/claro3.png)
 
-### Customer library
+### Tenant admin
 
-![Library with purchased content](./docs/screenshots/claro4.png)
+![Tenant Admin](./docs/screenshots/claro4.png)
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Framework | Next.js 15 (App Router, Server Components) |
-| CMS / Database | Payload CMS 3 + MongoDB |
-| API | tRPC v11 + TanStack Query v5 |
-| Payments | Stripe Connect (Express accounts) |
-| AI | Anthropic Claude Haiku (structured tool use) |
-| Auth | Payload built-in (session, HTTP-only cookie) |
-| UI | Tailwind CSS 4 + shadcn/ui + Radix UI |
-| State | Zustand (cart) + Nuqs (URL params) |
-| Storage | Vercel Blob (media uploads) |
-| Validation | Zod (runtime boundaries + env schema) |
-| Language | TypeScript (strict mode) |
+| Layer          | Technology                                   |
+| -------------- | -------------------------------------------- |
+| Framework      | Next.js 15 (App Router, Server Components)   |
+| CMS / Database | Payload CMS 3 + MongoDB                      |
+| API            | tRPC v11 + TanStack Query v5                 |
+| Payments       | Stripe Connect (Express accounts)            |
+| AI             | Anthropic Claude Haiku (structured tool use) |
+| Auth           | Payload built-in (session, HTTP-only cookie) |
+| UI             | Tailwind CSS 4 + shadcn/ui + Radix UI        |
+| State          | Zustand (cart) + Nuqs (URL params)           |
+| Storage        | Vercel Blob (media uploads)                  |
+| Validation     | Zod (runtime boundaries + env schema)        |
+| Language       | TypeScript (strict mode)                     |
 
 ---
 
 ## Features
 
 **Marketplace**
+
 - Hierarchical category browsing (parent → subcategories)
 - Product filtering by price range, tags, category, and search
 - Sorting by newest, trending (review count), and bestsellers (order count)
 - Cursor-based infinite pagination
 
 **Multi-Tenant Storefronts**
+
 - Each creator gets a dedicated storefront at `/tenants/[slug]`
 - Feature-flagged subdomain routing (`[slug].domain.com`) via Next.js middleware
 - Products scoped to tenant via Payload multi-tenant plugin
 - Private products hidden from global marketplace discovery
 
 **Checkout & Payments**
+
 - Stripe Checkout Sessions routed to creator's Connect account
 - Platform fee deducted as `application_fee_amount`
 - Webhook handler creates orders idempotently (deduplication by `stripeCheckoutSessionId`)
 - Creator onboarding via Stripe Express account link
 
 **Library & Content**
+
 - Purchased products unlock protected rich-text content
 - Content rendered with Payload's Lexical editor (`@payloadcms/richtext-lexical`)
 - Purchase verification enforced server-side before content is served
 
 **Reviews**
+
 - 5-star rating + text review, one per user per product (compound unique index)
 - Purchase required before reviewing (enforced in tRPC procedure)
 - Review and order counts auto-maintained on products via Payload hooks
 - AI-powered review draft generation (feature flag: `NEXT_PUBLIC_FEATURE_AI_REVIEW_HELPER`)
 
 **AI Review Helper**
+
 - Claude Haiku generates a suggested `{rating, description}` from product context
 - Structured output via Anthropic tool use API — no prompt parsing
 - Output validated with Zod before returning to client
@@ -182,6 +188,7 @@ Signature verified with `STRIPE_WEBHOOK_SECRET` before any processing.
 `src/env.ts` validates all environment variables at startup using Zod. The app throws with a descriptive error before accepting any requests if configuration is missing or invalid.
 
 Conditional refinements enforce that:
+
 - `ANTHROPIC_API_KEY` is present when `NEXT_PUBLIC_FEATURE_AI_REVIEW_HELPER=true`
 - `BLOB_READ_WRITE_TOKEN` is present in production
 - `STRIPE_WEBHOOK_SECRET` is present in production
@@ -190,10 +197,10 @@ Conditional refinements enforce that:
 
 Two runtime flags control optional behaviour:
 
-| Flag | Default | Effect |
-|------|---------|--------|
+| Flag                                    | Default | Effect                                             |
+| --------------------------------------- | ------- | -------------------------------------------------- |
 | `NEXT_PUBLIC_FEATURE_SUBDOMAIN_ROUTING` | `false` | Enables `[slug].domain.com` via middleware rewrite |
-| `NEXT_PUBLIC_FEATURE_AI_REVIEW_HELPER` | `false` | Enables Claude-powered review suggestions |
+| `NEXT_PUBLIC_FEATURE_AI_REVIEW_HELPER`  | `false` | Enables Claude-powered review suggestions          |
 
 Both flags are checked on the client (to show/hide UI) and independently on the server (to guard the tRPC procedure). The server guard does not trust the client state.
 
@@ -237,18 +244,18 @@ npm install
 cp .env.example .env
 ```
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `PAYLOAD_SECRET` | Yes | Payload CMS secret key |
-| `DATABASE_URI` | Yes | MongoDB connection string |
-| `STRIPE_SECRET_KEY` | Yes | Stripe secret key |
-| `STRIPE_WEBHOOK_SECRET` | Production | Stripe webhook signature secret |
-| `NEXT_PUBLIC_APP_URL` | Yes | Base URL (`http://localhost:3000`) |
-| `NEXT_PUBLIC_ROOT_DOMAIN` | Yes | Root domain for subdomain routing |
-| `BLOB_READ_WRITE_TOKEN` | Production | Vercel Blob token for media uploads |
-| `ANTHROPIC_API_KEY` | If AI enabled | Anthropic API key |
-| `NEXT_PUBLIC_FEATURE_AI_REVIEW_HELPER` | No | `true` to enable AI review helper |
-| `NEXT_PUBLIC_FEATURE_SUBDOMAIN_ROUTING` | No | `true` to enable subdomain routing |
+| Variable                                | Required      | Description                         |
+| --------------------------------------- | ------------- | ----------------------------------- |
+| `PAYLOAD_SECRET`                        | Yes           | Payload CMS secret key              |
+| `DATABASE_URI`                          | Yes           | MongoDB connection string           |
+| `STRIPE_SECRET_KEY`                     | Yes           | Stripe secret key                   |
+| `STRIPE_WEBHOOK_SECRET`                 | Production    | Stripe webhook signature secret     |
+| `NEXT_PUBLIC_APP_URL`                   | Yes           | Base URL (`http://localhost:3000`)  |
+| `NEXT_PUBLIC_ROOT_DOMAIN`               | Yes           | Root domain for subdomain routing   |
+| `BLOB_READ_WRITE_TOKEN`                 | Production    | Vercel Blob token for media uploads |
+| `ANTHROPIC_API_KEY`                     | If AI enabled | Anthropic API key                   |
+| `NEXT_PUBLIC_FEATURE_AI_REVIEW_HELPER`  | No            | `true` to enable AI review helper   |
+| `NEXT_PUBLIC_FEATURE_SUBDOMAIN_ROUTING` | No            | `true` to enable subdomain routing  |
 
 ### Run
 
@@ -267,16 +274,16 @@ npm run build && npm start
 
 After seeding:
 
-| Role | Email | Password | Notes |
-|------|-------|----------|-------|
-| Super Admin | `admin@demo.com` | `Admin1234!` | Full platform access via Payload admin panel |
-| Tenant Admin | `admin@knowledge-hub.com` | `Admin1234!` | Manages Knowledge Hub storefront and products |
-| Tenant Admin | `admin@creative-corner.com` | `Admin1234!` | Manages Creative Corner storefront and products |
-| Customer | `alice@example.com` | `Customer1234!` | Has purchase history and reviews |
-| Customer | `bob@example.com` | `Customer1234!` | Has purchase history and reviews |
-| Customer | `carol@example.com` | `Customer1234!` | Has purchase history and reviews |
-| Customer | `david@example.com` | `Customer1234!` | Has purchase history |
-| Customer | `eva@example.com` | `Customer1234!` | Has purchase history |
+| Role         | Email                       | Password        | Notes                                           |
+| ------------ | --------------------------- | --------------- | ----------------------------------------------- |
+| Super Admin  | `admin@demo.com`            | `Admin1234!`    | Full platform access via Payload admin panel    |
+| Tenant Admin | `admin@knowledge-hub.com`   | `Admin1234!`    | Manages Knowledge Hub storefront and products   |
+| Tenant Admin | `admin@creative-corner.com` | `Admin1234!`    | Manages Creative Corner storefront and products |
+| Customer     | `alice@example.com`         | `Customer1234!` | Has purchase history and reviews                |
+| Customer     | `bob@example.com`           | `Customer1234!` | Has purchase history and reviews                |
+| Customer     | `carol@example.com`         | `Customer1234!` | Has purchase history and reviews                |
+| Customer     | `david@example.com`         | `Customer1234!` | Has purchase history                            |
+| Customer     | `eva@example.com`           | `Customer1234!` | Has purchase history                            |
 
 The seed creates 2 tenants, 18 categories, 35+ products across both storefronts, purchase history across all customer accounts, and demo reviews with varied ratings to demonstrate trending and bestseller sorting.
 
